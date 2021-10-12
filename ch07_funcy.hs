@@ -1,5 +1,7 @@
 module Funcy where
 
+import System.Directory.Internal.Prelude (Integral)
+
 -- Anon functions
 fnIfOdd :: Integer -> (Integer -> Integer) -> Integer
 fnIfOdd = \n -> \f -> case odd n of
@@ -64,3 +66,18 @@ numbers x
   | x < 0 = -1
   | x == 0 = 0
   | x > 0 = 1
+
+-- chapter exercises
+
+tensDigit :: Integral a => a -> a
+tensDigit x = d
+  where
+    xLast = x `div` 10
+    d = xLast `mod` 10
+
+tensDigitSol :: Integral a => a -> a
+tensDigitSol = f
+  where
+    dm y = divMod y 10
+    -- d = snd (dm (fst (dm x)))
+    f = snd . dm . fst . dm
