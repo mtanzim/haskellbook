@@ -78,7 +78,7 @@ tensDigit x = d
 tensDigitReusable :: Integral a => a -> a -> a
 tensDigitReusable w = f
   where
-    dm y = divMod y w
+    dm = (flip divMod) w
     f = snd . dm . fst . dm
 
 tensDigitSol :: Integral a => a -> a
