@@ -75,9 +75,28 @@ tensDigit x = d
     xLast = x `div` 10
     d = xLast `mod` 10
 
-tensDigitSol :: Integral a => a -> a
-tensDigitSol = f
+tensDigitReusable :: Integral a => a -> a -> a
+tensDigitReusable w = f
   where
-    dm y = divMod y 10
-    -- d = snd (dm (fst (dm x)))
+    dm y = divMod y w
     f = snd . dm . fst . dm
+
+tensDigitSol :: Integral a => a -> a
+tensDigitSol = tensDigitReusable 10
+
+hundDigitSol :: Integral a => a -> a
+hundDigitSol = tensDigitReusable 100
+
+foldBool :: a -> a -> Bool -> a
+foldBool a a' b =
+  case b of
+    True -> a
+    False -> a'
+
+foldBool2 :: a -> a -> Bool -> a
+foldBool2 a a' b
+  | b == True = a
+  | b == False = a'
+
+g :: (a -> b) -> (a, c) -> (b, c)
+g aTob (a, c) = ((aTob a), c)
