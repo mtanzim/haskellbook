@@ -27,4 +27,6 @@ digits n = go n []
         (d, m) = divMod n' 10
 
 wordNumber :: Int -> String
-wordNumber n = concat (intersperse "-" (map digitToWord (digits n)))
+-- wordNumber n = concat (intersperse "-" (map digitToWord (digits n)))
+-- composition bach
+wordNumber = concat . (intersperse "-") . (map digitToWord) . digits
