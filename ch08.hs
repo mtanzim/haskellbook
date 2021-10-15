@@ -34,3 +34,10 @@ dividedBy num denom =
                                 (True, True) -> 1
                                 (False, False) -> 1
                                 _ -> (-1)
+
+
+mc91 :: (Ord t, Num t) => t -> t
+mc91 n
+    | n > 100 = n - 10
+    | otherwise = mc91(mc91(n+11))
+
