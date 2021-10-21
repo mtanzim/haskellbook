@@ -39,7 +39,6 @@ eftChar start end = go start end []
       | otherwise = go (succ start') end' (start' : lst)
 
 -- thy fearful symmetry
-
 mywords :: String -> [String]
 mywords s = go s []
   where
