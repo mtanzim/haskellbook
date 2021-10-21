@@ -1,6 +1,7 @@
 module Ch09 where
 
 import Text.Parsec (endBy)
+import PoemLines (myChunks)
 
 safeHead :: [a] -> Maybe a
 safeHead [] = Nothing
@@ -40,11 +41,4 @@ eftChar start end = go start end []
 
 -- thy fearful symmetry
 mywords :: String -> [String]
-mywords s = go s []
-  where
-    go s' lst
-      | null s' = reverse lst
-      | otherwise = go (takeTail s') (takeWord s' : lst)
-      where
-        takeWord = takeWhile (/= ' ')
-        takeTail = dropWhile (== ' ') . dropWhile (/= ' ')
+mywords = myChunks ' '
