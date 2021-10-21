@@ -15,7 +15,6 @@ eftBool start end =
     (False, False) -> [False]
     (True, True) -> [True]
 
-
 -- TODO: idiomatic to reverse at the end?
 -- TODO: How to share this exact code between types?
 eftOrdering :: Ordering -> Ordering -> [Ordering]
@@ -38,3 +37,15 @@ eftChar start end = go start end []
     go start' end' lst
       | start' > end' = reverse lst
       | otherwise = go (succ start') end' (start' : lst)
+
+-- thy fearful symmetry
+
+mywords :: String -> [String]
+mywords s = go s []
+  where
+    go s' lst
+      | null s' = reverse lst
+      | otherwise = go (takeTail s') (takeWord s' : lst)
+      where
+        takeWord = takeWhile (/= ' ')
+        takeTail = dropWhile (== ' ') . dropWhile (/= ' ')
