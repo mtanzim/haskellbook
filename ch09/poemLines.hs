@@ -20,7 +20,6 @@ shouldEqual =
     "Could frame thy fearful symmetry?"
   ]
 
-
 myChunks :: Char -> String -> [String]
 myChunks delim s = go s []
   where
@@ -33,6 +32,9 @@ myChunks delim s = go s []
 
 myLines :: String -> [String]
 myLines = myChunks '\n'
+
+mywords :: String -> [String]
+mywords = myChunks ' '
 
 main :: IO ()
 main =

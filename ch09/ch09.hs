@@ -1,8 +1,5 @@
 module Ch09 where
 
-import Text.Parsec (endBy)
-import PoemLines (myChunks)
-
 safeHead :: [a] -> Maybe a
 safeHead [] = Nothing
 safeHead (a : _) = Just a
@@ -38,7 +35,3 @@ eftChar start end = go start end []
     go start' end' lst
       | start' > end' = reverse lst
       | otherwise = go (succ start') end' (start' : lst)
-
--- thy fearful symmetry
-mywords :: String -> [String]
-mywords = myChunks ' '
