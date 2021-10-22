@@ -14,5 +14,8 @@ caesar = common (+)
 unCaesar :: Int -> [Char] -> [Char]
 unCaesar = common (-)
 
-isValid :: Bool
-isValid = unCaesar 1 (caesar 1 "abracadbra") == "abracadbra"
+isValid :: Int -> Bool
+isValid n = unCaesar n (caesar n ['a'..'z']) == ['a'..'z']
+
+areAllValid :: Bool
+areAllValid = notElem False (map isValid [1 .. 52])
