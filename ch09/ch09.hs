@@ -1,5 +1,7 @@
 module Ch09 where
 
+import Data.Char
+
 safeHead :: [a] -> Maybe a
 safeHead [] = Nothing
 safeHead (a : _) = Just a
@@ -95,3 +97,15 @@ myZip2 :: [a] -> [b] -> [(a, b)]
 myZip2 = myZipWith f
   where
     f a b = (a, b)
+
+-- chapter exercises
+capFirst :: [Char] -> [Char]
+capFirst [] = ""
+capFirst (x:xs) = toUpper x : xs
+
+capAll :: [Char] -> [Char]
+capAll [] = ""
+capAll (x:xs) = toUpper x : capAll xs
+
+getFirstCap :: [Char] -> Char
+getFirstCap = head . capFirst
