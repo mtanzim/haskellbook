@@ -53,12 +53,45 @@ multOf3 = filter (\x -> rem x 3 == 0)
 multOf3Len :: [Integer] -> Int
 multOf3Len = length . (filter (\x -> rem x 3 == 0))
 
-
 myFilter :: String -> [String]
-myFilter = filterFn . words where
-  filterFn = filter f where
-  f w 
+myFilter = filterFn . words
+  where
+    filterFn = filter f where
+    f w
       | w == "the" = False
       | w == "a" = False
       | w == "an" = False
       | otherwise = True
+
+-- zipping
+-- TODO: debug the no-exhaustive pattern match warnings
+myZip :: [a] -> [b] -> [(a, b)]
+myZip as bs
+  | null as = []
+  | null bs = []
+  | otherwise =
+    reverse (go as bs [])
+  where
+    go (a : as') (b : bs') curLst =
+      case (as', bs') of
+        ([], _) -> ((a, b) : curLst)
+        (_, []) -> ((a, b) : curLst)
+        _ -> go as' bs' ((a, b) : curLst)
+
+myZipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
+myZipWith f as bs
+  | null as = []
+  | null bs = []
+  | otherwise =
+    reverse (go as bs [])
+  where
+    go (a : as') (b : bs') curLst =
+      case (as', bs') of
+        ([], _) -> (f a b : curLst)
+        (_, []) -> (f a b : curLst)
+        _ -> go as' bs' (f a b : curLst)
+
+myZip2 :: [a] -> [b] -> [(a, b)]
+myZip2 = myZipWith f
+  where
+    f a b = (a, b)
