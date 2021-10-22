@@ -3,7 +3,7 @@ module Cipher where
 import Data.Char (chr, ord)
 
 caesar :: Int -> [Char] -> [Char]
-caesar n xs = map chr (map fn xs)
+caesar n = map (chr . fn)
   where
-    sumVal x = (+) (ord x) (mod n 26)
-    fn x = (mod ((sumVal x) - 97) 26) + 97
+    sumVal x = (+) (mod n 26) (ord x)
+    fn x = (+) 97 (mod ((-) (sumVal x) 97) 26)
