@@ -101,34 +101,53 @@ myZip2 = myZipWith f
 -- chapter exercises
 capFirst :: [Char] -> [Char]
 capFirst [] = ""
-capFirst (x:xs) = toUpper x : xs
+capFirst (x : xs) = toUpper x : xs
 
 capAll :: [Char] -> [Char]
 capAll [] = ""
-capAll (x:xs) = toUpper x : capAll xs
+capAll (x : xs) = toUpper x : capAll xs
 
 getFirstCap :: [Char] -> Char
 getFirstCap = head . capFirst
 
-myOr :: [Bool] -> Bool 
+myOr :: [Bool] -> Bool
 myOr [] = False
-myOr (x:xs) = x || myOr xs
+myOr (x : xs) = x || myOr xs
 
 myAny :: (a -> Bool) -> [a] -> Bool
 myAny f [] = False
-myAny f (x:xs) = f x || myAny f xs
+myAny f (x : xs) = f x || myAny f xs
 
-myElem :: Eq a => a -> [a] -> Bool 
-myElem _ [] = False 
-myElem a (x:xs) = a==x || myElem a xs
+myElem :: Eq a => a -> [a] -> Bool
+myElem _ [] = False
+myElem a (x : xs) = a == x || myElem a xs
 
 myElem2 :: Eq a => a -> [a] -> Bool
 myElem2 a = myAny ((==) a)
 
-myReverse:: [a] -> [a]
+myReverse :: [a] -> [a]
 myReverse [] = []
-myReverse xs = 
-  go xs [] where
-    go (x:xs') lst = case xs' of
-      [] -> x:lst
-      _ -> go xs' (x:lst)
+myReverse xs =
+  go xs []
+  where
+    go (x : xs') lst = case xs' of
+      [] -> x : lst
+      _ -> go xs' (x : lst)
+
+mySquish :: [[a]] -> [a]
+mySquish [] = []
+mySquish xss =
+  go xss []
+  where
+    go (xs : xss') lst = case xss' of
+      [] -> xs ++ lst
+      _ -> xs ++ (go xss' lst)
+
+mySquishMap :: (a -> [b]) -> [a] -> [b]
+mySquishMap f [] = []
+mySquishMap f xss =
+  go xss []
+  where
+    go (xs : xss') lst = case xss' of
+      [] -> (f xs) ++ lst
+      _ -> (f xs) ++ (go xss' lst)
