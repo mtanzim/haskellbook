@@ -118,3 +118,17 @@ myAny :: (a -> Bool) -> [a] -> Bool
 myAny f [] = False
 myAny f (x:xs) = f x || myAny f xs
 
+myElem :: Eq a => a -> [a] -> Bool 
+myElem _ [] = False 
+myElem a (x:xs) = a==x || myElem a xs
+
+myElem2 :: Eq a => a -> [a] -> Bool
+myElem2 a = myAny ((==) a)
+
+myReverse:: [a] -> [a]
+myReverse [] = []
+myReverse xs = 
+  go xs [] where
+    go (x:xs') lst = case xs' of
+      [] -> x:lst
+      _ -> go xs' (x:lst)
