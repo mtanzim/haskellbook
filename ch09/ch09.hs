@@ -155,30 +155,23 @@ mySquishMap f xss =
 squishAgain :: [[b]] -> [b]
 squishAgain = mySquishMap id
 
-myMaxBy :: (a -> a -> Ordering ) -> [a] -> a
-myMaxBy f [] = undefined
-myMaxBy f (x:xs)
+minmax :: Ordering -> (a -> a -> Ordering) -> [a] -> a
+minmax _ _ [] = undefined
+minmax o f (x : xs)
   | null xs = x
-  | otherwise = 
+  | otherwise =
     go xs x
-    where 
-      go xs' curMax = case xs' of 
-        [] -> curMax
-        (a:[]) -> if (f a curMax) == GT then a else curMax
-        (a:as) -> go as (if (f a curMax) == GT then a else curMax)
+  where
+    go xs' cur = case xs' of
+      [] -> cur
+      (a : []) -> if (f a cur) == o then a else cur
+      (a : as) -> go as (if (f a cur) == o then a else cur)
 
-myMinBy :: (a -> a -> Ordering ) -> [a] -> a
-myMinBy f [] = undefined
-myMinBy f (x:xs)
-  | null xs = x
-  | otherwise = 
-    go xs x
-    where 
-      go xs' curMin = case xs' of 
-        [] -> curMin
-        (a:[]) -> if (f a curMin) == LT then a else curMin
-        (a:as) -> go as (if (f a curMin) == LT then a else curMin)
+myMaxBy :: (a -> a -> Ordering) -> [a] -> a
+myMaxBy = minmax GT
 
+myMinBy :: (a -> a -> Ordering) -> [a] -> a
+myMinBy = minmax LT
 
 myMaximum :: (Ord a) => [a] -> a
 myMaximum = myMaxBy compare
