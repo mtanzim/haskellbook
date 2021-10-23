@@ -166,3 +166,22 @@ myMaxBy f (x:xs)
         [] -> curMax
         (a:[]) -> if (f a curMax) == GT then a else curMax
         (a:as) -> go as (if (f a curMax) == GT then a else curMax)
+
+myMinBy :: (a -> a -> Ordering ) -> [a] -> a
+myMinBy f [] = undefined
+myMinBy f (x:xs)
+  | null xs = x
+  | otherwise = 
+    go xs x
+    where 
+      go xs' curMin = case xs' of 
+        [] -> curMin
+        (a:[]) -> if (f a curMin) == LT then a else curMin
+        (a:as) -> go as (if (f a curMin) == LT then a else curMin)
+
+
+myMaximum :: (Ord a) => [a] -> a
+myMaximum = myMaxBy compare
+
+myMinimum :: (Ord a) => [a] -> a
+myMinimum = myMaxBy compare
