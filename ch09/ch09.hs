@@ -151,3 +151,18 @@ mySquishMap f xss =
     go (xs : xss') lst = case xss' of
       [] -> (f xs) ++ lst
       _ -> (f xs) ++ (go xss' lst)
+
+squishAgain :: [[b]] -> [b]
+squishAgain = mySquishMap id
+
+myMaxBy :: (a -> a -> Ordering ) -> [a] -> a
+myMaxBy f [] = undefined
+myMaxBy f (x:xs)
+  | null xs = x
+  | otherwise = 
+    go xs x
+    where 
+      go xs' curMax = case xs' of 
+        [] -> curMax
+        (a:[]) -> if (f a curMax) == GT then a else curMax
+        (a:as) -> go as (if (f a curMax) == GT then a else curMax)
