@@ -39,7 +39,7 @@ filterDbDate = foldr f []
       _ -> b
 
 mostRecent :: [DatabaseItem] -> UTCTime
-mostRecent ds = foldr f (head (filterDbDate ds)) ds
+mostRecent ds = foldr f ((head . filterDbDate) ds) ds
   where
     f a b = case a of
       DbDate utcTime -> max b utcTime
