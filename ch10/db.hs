@@ -24,9 +24,23 @@ theDatabase =
       )
   ]
 
+filterDbNumber :: [DatabaseItem] -> [Integer]
+filterDbNumber = foldr f []
+  where
+    f a b = case a of
+      DbNumber n -> b ++ [n]
+      _ -> b
+
 filterDbDate :: [DatabaseItem] -> [UTCTime]
 filterDbDate = foldr f []
   where
     f a b = case a of
       DbDate utcTime -> b ++ [utcTime]
+      _ -> b
+
+mostRecent :: [DatabaseItem] -> UTCTime
+mostRecent ds = foldr f (head (filterDbDate ds)) ds
+  where
+    f a b = case a of
+      DbDate utcTime -> max b utcTime
       _ -> b
