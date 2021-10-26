@@ -16,6 +16,7 @@ theDatabase =
           (secondsToDiffTime 34123)
       ),
     DbNumber 9001,
+    DbNumber 200,
     DbString "Hello, world!",
     DbDate
       ( UTCTime
@@ -44,3 +45,14 @@ mostRecent ds = foldr f ((head . filterDbDate) ds) ds
     f a b = case a of
       DbDate utcTime -> max b utcTime
       _ -> b
+
+sumDb :: [DatabaseItem] -> Integer
+sumDb = (foldr f 0) . filterDbNumber
+  where
+    f a b = a + b
+
+avgDb :: [DatabaseItem] -> Double
+avgDb xs = sum / size
+  where
+    sum = fromIntegral (sumDb xs) :: Double
+    size = fromIntegral (length (filterDbNumber xs)) :: Double
