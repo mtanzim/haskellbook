@@ -41,3 +41,22 @@ seekritFunc x = totalChars / totalWords
   where
     totalChars = fromIntegral (sum (map length (words x)))
     totalWords = fromIntegral (length (words x))
+
+myAnd :: [Bool] -> Bool
+myAnd = foldr f z
+  where
+    f a b =
+      a && b
+    z = True
+
+myOr :: [Bool] -> Bool
+myOr = foldr f z
+  where
+    f a b = a || b
+    z = False
+
+myAny :: (a -> Bool) -> [a] -> Bool
+myAny f = foldr (\a b -> f a || b) False
+
+myElem :: Eq a => a -> [a] -> Bool
+myElem x = foldr (\a b -> a == x) False
