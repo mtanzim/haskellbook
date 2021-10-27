@@ -74,3 +74,9 @@ myFilter :: (a -> Bool) -> [a] -> [a]
 myFilter f = foldr flt []
   where
     flt a b = if f a then a : b else b
+
+squish :: [[a]] -> [a]
+squish = foldr (++) []
+
+squishMap :: (a -> [b]) -> [a] -> [b]
+squishMap f = foldr ((++) . f) []
