@@ -60,3 +60,17 @@ myAny f = foldr (\a b -> f a || b) False
 
 myElem :: Eq a => a -> [a] -> Bool
 myElem x = foldr (\a b -> a == x) False
+
+myElem2 :: Eq a => a -> [a] -> Bool
+myElem2 x = myAny (x ==)
+
+myReverse :: [a] -> [a]
+myReverse = foldl (\b a -> a : b) []
+
+myMap :: (a -> b) -> [a] -> [b]
+myMap f = foldr (\a b -> (f a) : b) []
+
+myFilter :: (a -> Bool) -> [a] -> [a]
+myFilter f = foldr flt []
+  where
+    flt a b = if f a then a : b else b
