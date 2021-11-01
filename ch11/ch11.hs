@@ -1,5 +1,7 @@
 module Ch11 where
 
+import Data.Int
+
 data DogueDeBordeaux doge = DogueDeBordeaux doge
 
 data Doggies a
@@ -43,3 +45,34 @@ areCars = foldr (\a b -> isCar a && b) True
 getManu :: Vehicle -> Manufacturer
 getManu (Car m _) = m
 getManu _ = undefined
+
+-- Pity the Bool
+-- cardinality 4
+data BigSmall = Big Bool | Small Bool deriving (Eq, Show)
+
+-- cardinality 256 + 2
+data NumberOrBool = Numba Int8 | BoolyBool Bool deriving (Eq, Show)
+
+-- Gardener
+type Gardener = String
+
+-- data FlowerType
+--   = Gardenins
+--   | Daisy
+--   | Rose
+--   | Lilac
+--   deriving (Show)
+
+-- data Garden = Garden Gardener FlowerType deriving (Show)
+
+-- Normal Form
+data Gardenis = Gardenis deriving (Show)
+
+data Daisy = Daisy deriving (Show)
+
+data Rose = Rose deriving (Show)
+
+data Lilac = Lilac deriving (Show)
+
+-- Normal form
+data Garden = GardenisGarden Gardener Gardenis | DaisyGarden Gardener Daisy | RoseGarden Gardener Rose | LilacGarden Gardener Lilac deriving (Show)
