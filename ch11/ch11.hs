@@ -112,3 +112,15 @@ allLanguages =
 
 allProgrammgers :: [Programmer]
 allProgrammgers = [Programmer {os = os', lang = lang'} | os' <- allOperatingSystems, lang' <- allLanguages]
+
+-- The Quad, determine number of unique inhabitants
+data Quad = One | Two | Three | Four deriving (Eq, Show)
+
+-- how many different forms can this take?
+-- eQuad :: Either Quad Quad --> 4 + 4 = 8
+
+-- 2. prodQuad :: (Quad, Quad) --> 4 * 4 = 16
+-- 3. funcQuad :: Quad -> Quad --> 4 ^ 4 = 256
+-- 4. prodTBool :: (Bool, Bool, Bool) --> 2 * 2 * 2 = 8
+-- 5. gTwo :: Bool -> Bool -> Bool --> 2 ^ (2 * 2) = 16
+-- 6. fTwo :: Bool -> Quad -> Quad --> 4 ^ (4*2) = 65536
