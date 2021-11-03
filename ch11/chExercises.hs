@@ -14,6 +14,7 @@ common op n = chr . fn
 caesar :: Int -> Char -> Char
 caesar = common (+)
 
+-- TODO: spaces do not work
 cipherVignere :: String -> String -> String
 cipherVignere xs ks =
   go xs 0
