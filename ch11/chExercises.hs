@@ -20,8 +20,9 @@ cipherVignere xs ks =
   where
     go xs' i =
       case xs' of
-        (head : []) -> (caesar (shiftVal (ks !! curI)) head) : []
-        (head : tail) -> (caesar (shiftVal (ks !! curI)) head) : go tail (i + 1)
+        (head : []) -> (caesar (shiftVal curChar) head) : []
+        (head : tail) -> (caesar (shiftVal curChar) head) : go tail (i + 1)
         _ -> []
       where
+        curChar = ks !! curI
         curI = mod i (length ks)
