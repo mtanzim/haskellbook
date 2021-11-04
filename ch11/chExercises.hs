@@ -33,7 +33,8 @@ isSubseqOf xs@(x : _) ys = elem x ys && isSubseqOf (tail xs) ys
 isSubseqOf [] _ = True
 
 capitalizeWords :: String -> [(String, String)]
-capitalizeWords ws = fn (words ws)
+
+capitalizeWords = fn . words
   where
     fn wsArr =
       case wsArr of
