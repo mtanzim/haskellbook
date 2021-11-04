@@ -33,10 +33,22 @@ isSubseqOf xs@(x : _) ys = elem x ys && isSubseqOf (tail xs) ys
 isSubseqOf [] _ = True
 
 capitalizeWords :: String -> [(String, String)]
-
 capitalizeWords = fn . words
   where
     fn wsArr =
       case wsArr of
         [] -> []
         (word@(firstWord : rest)) : tail -> ((toUpper firstWord : rest), word) : fn tail
+
+capitalizeWord :: String -> String
+capitalizeWord (first : rest) = toUpper first : rest
+capitalizeWord [] = []
+
+capitalizeParagraph :: String -> String
+capitalizeParagraph s = foldr (\acc w -> acc ++ " " ++ w) "" (go (words s) True)
+  where
+    go word needsCap =
+      case (word, needsCap) of
+        ([], _) -> []
+        (head : tail, True) -> capitalizeWord head : go tail ('.' `elem` head)
+        (head : tail, False) -> head : go tail ('.' `elem` head)
