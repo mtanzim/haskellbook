@@ -1,6 +1,7 @@
 module Ch11Exercises where
 
-import Data.Char (chr, ord)
+import Data.Char (chr, ord, toUpper)
+import qualified Data.Text.Internal.Fusion.Common as Char
 
 -- TODO: name these functions better
 caesar :: Int -> Char -> Char
@@ -26,3 +27,15 @@ cipherVignere xs ks =
         curChar = ks !! curI
         curI = mod i (length ks)
         shiftVal c = ord c - 97
+
+isSubseqOf :: (Eq a) => [a] -> [a] -> Bool
+isSubseqOf xs@(x : _) ys = elem x ys && isSubseqOf (tail xs) ys
+isSubseqOf [] _ = True
+
+capitalizeWords :: String -> [(String, String)]
+capitalizeWords ws = fn (words ws)
+  where
+    fn wsArr =
+      case wsArr of
+        [] -> []
+        (word@(firstWord : rest)) : tail -> ((toUpper firstWord : rest), word) : fn tail
