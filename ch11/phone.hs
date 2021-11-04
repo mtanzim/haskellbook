@@ -27,4 +27,7 @@ reverseTaps p c = if isUpper c then ('*', 1) : [digit p (toLower c)] else [digit
     getPos [] _ _ = -2
 
 cellPhonesDead :: DaPhone -> String -> [(Digit, Presses)]
-cellPhonesDead p sentence = foldr (\acc l -> acc ++ l) [] (map (\c -> reverseTaps p c) sentence)
+cellPhonesDead p sentence = foldr ((++)) [] (map (\c -> reverseTaps p c) sentence)
+
+fingerTaps :: [(Digit, Presses)] -> Presses
+fingerTaps = (foldr ((+)) 0 . map (\(d, p) -> p))
