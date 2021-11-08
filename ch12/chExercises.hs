@@ -15,7 +15,7 @@ replaceThe = unwords . go . words
       [] -> []
 
 countTheBeforeVowel :: String -> Integer
-countTheBeforeVowel s = go (words s) 0
+countTheBeforeVowel = flip go 0 . words
   where
     go xs count = case xs of
       [] -> count
