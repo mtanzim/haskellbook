@@ -55,3 +55,39 @@ integerToNat i
     go i = case i of
       0 -> Zero
       i -> Succ (go (i -1))
+
+isJust :: Maybe a -> Bool
+isJust (Just _) = True
+isJust _ = False
+
+isNothing :: Maybe a -> Bool
+isNothing = not . isJust
+
+mayybee :: b -> (a -> b) -> Maybe a -> b
+mayybee b aToB mba = case mba of
+  Nothing -> b
+  Just a -> aToB a
+
+fromMaybe :: a -> Maybe a -> a
+fromMaybe a mba = case mba of
+  Nothing -> a
+  Just a' -> a'
+
+listToMaybe :: [a] -> Maybe a
+listToMaybe [a] = Just a
+listToMaybe [] = Nothing
+listToMaybe _ = Nothing
+
+maybeToList :: Maybe a -> [a]
+maybeToList (Just a) = [a]
+maybeToList Nothing = []
+
+catMaybes :: [Maybe a] -> [a]
+catMaybes [] = []
+catMaybes (head : tail) = case head of
+  Just a -> a : catMaybes tail
+  Nothing -> catMaybes tail
+
+flipMaybe :: [Maybe a] -> Maybe [a]
+flipMaybe [] = Just []
+flipMaybe lst = if length (catMaybes lst) == length lst then Just (catMaybes lst) else Nothing
