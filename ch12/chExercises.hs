@@ -1,5 +1,8 @@
 module Ch12Exercises where
 
+vowels :: [Char]
+vowels = "aeiouAEIOU"
+
 notThe :: String -> Maybe String
 notThe "the" = Nothing
 notThe s = Just s
@@ -20,10 +23,19 @@ countTheBeforeVowel = flip go 0 . words
     go xs count = case xs of
       [] -> count
       (head : []) -> count
-      (head : neck : tail) -> if (notThe head) == Nothing && elem (neck !! 0) "aeiouAEIOU" then go (neck : tail) (count + 1) else go (neck : tail) count
+      (head : neck : tail) -> if (notThe head) == Nothing && elem (neck !! 0) vowels then go (neck : tail) (count + 1) else go (neck : tail) count
 
 isVowel :: Char -> Bool
-isVowel = flip elem "aeiouAEIOU"
+isVowel = flip elem vowels
 
 countVowels :: String -> Integer
-countVowels = foldr (\c acc -> if (isVowel c) then acc + 1 else acc) 0
+countVowels = foldr (\c acc -> if isVowel c then acc + 1 else acc) 0
+
+-- TODO: this assumes everything except a vowel is a consonant which is inaccurate
+countConsonants :: String -> Integer
+countConsonants = foldr (\c acc -> if isVowel c then acc else acc + 1) 0
+
+newtype Word' = Word' String deriving (Eq, Show)
+
+mkWord :: String -> Maybe Word'
+mkWord s = if countConsonants s < countVowels s then Nothing else Just (Word' s)
