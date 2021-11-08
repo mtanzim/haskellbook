@@ -13,3 +13,11 @@ replaceThe = unwords . go . words
     go ws = case ws of
       (head : tail') -> getHead head : (go tail')
       [] -> []
+
+countTheBeforeVowel :: String -> Integer
+countTheBeforeVowel s = go (words s) 0
+  where
+    go xs count = case xs of
+      [] -> count
+      (head : []) -> count
+      (head : neck : tail) -> if (notThe head) == Nothing && elem (neck !! 0) "aeiouAEIOU" then go (neck : tail) (count + 1) else go (neck : tail) count
