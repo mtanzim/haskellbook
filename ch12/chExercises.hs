@@ -47,4 +47,11 @@ natToInteger Zero = 0
 natToInteger (Succ Zero) = 1
 natToInteger (Succ (Succ c)) = 1 + natToInteger (Succ c)
 
--- integerToNat :: Integer -> Maybe Int
+integerToNat :: Integer -> Maybe Nat
+integerToNat i
+  | i < 0 = Nothing
+  | otherwise = Just (go i)
+  where
+    go i = case i of
+      0 -> Zero
+      i -> Succ (go (i -1))
