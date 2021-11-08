@@ -39,3 +39,12 @@ newtype Word' = Word' String deriving (Eq, Show)
 
 mkWord :: String -> Maybe Word'
 mkWord s = if countConsonants s < countVowels s then Nothing else Just (Word' s)
+
+data Nat = Zero | Succ Nat deriving (Eq, Show)
+
+natToInteger :: Nat -> Integer
+natToInteger Zero = 0
+natToInteger (Succ Zero) = 1
+natToInteger (Succ (Succ c)) = 1 + natToInteger (Succ c)
+
+-- integerToNat :: Integer -> Maybe Int
