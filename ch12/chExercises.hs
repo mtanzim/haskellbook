@@ -21,3 +21,9 @@ countTheBeforeVowel = flip go 0 . words
       [] -> count
       (head : []) -> count
       (head : neck : tail) -> if (notThe head) == Nothing && elem (neck !! 0) "aeiouAEIOU" then go (neck : tail) (count + 1) else go (neck : tail) count
+
+isVowel :: Char -> Bool
+isVowel = flip elem "aeiouAEIOU"
+
+countVowels :: String -> Integer
+countVowels = foldr (\c acc -> if (isVowel c) then acc + 1 else acc) 0
