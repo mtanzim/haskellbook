@@ -56,6 +56,7 @@ integerToNat i
       0 -> Zero
       i -> Succ (go (i -1))
 
+-- Maybe lib
 isJust :: Maybe a -> Bool
 isJust (Just _) = True
 isJust _ = False
@@ -91,3 +92,38 @@ catMaybes (head : tail) = case head of
 flipMaybe :: [Maybe a] -> Maybe [a]
 flipMaybe [] = Just []
 flipMaybe lst = if length (catMaybes lst) == length lst then Just (catMaybes lst) else Nothing
+
+-- Either lib
+
+lefts' :: [Either a b] -> [a]
+lefts' [] = []
+lefts' (head : tail) = case head of
+  Left a -> a : lefts' tail
+  Right _ -> lefts' tail
+
+rights' :: [Either a b] -> [b]
+rights' = foldr fn []
+  where
+    fn a b = case a of
+      Right a' -> a' : b
+      Left _ -> b
+
+partitionEithers' :: [Either a b] -> ([a], [b])
+partitionEithers' lst = (lefts' lst, rights' lst)
+
+eitherMaybe' :: (b -> c) -> Either a b -> Maybe c
+eitherMaybe' bToC ethr = case ethr of
+  Left a -> Nothing
+  Right b -> Just (bToC b)
+
+either' :: (a -> c) -> (b -> c) -> Either a b -> c
+either' aToC bToC ethr = case ethr of
+  Left a -> aToC a
+  Right b -> bToC b
+
+eitherMaybe'' :: (b -> c) -> Either a b -> Maybe c
+eitherMaybe'' = either' aToC
+  where
+    aToC a = case a of
+      Left a -> Nothing
+      Right a' -> Just a'
