@@ -122,8 +122,7 @@ either' aToC bToC ethr = case ethr of
   Right b -> bToC b
 
 eitherMaybe'' :: (b -> c) -> Either a b -> Maybe c
-eitherMaybe'' = either' aToC
+eitherMaybe'' bToC = either' aToC (bToC' bToC)
   where
-    aToC a = case a of
-      Left a -> Nothing
-      Right a' -> Just a'
+    aToC _ = Nothing
+    bToC' fn b = Just (fn b)
