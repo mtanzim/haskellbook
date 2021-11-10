@@ -126,3 +126,17 @@ eitherMaybe'' bToC = either' aToC (bToC' bToC)
   where
     aToC _ = Nothing
     bToC' fn b = Just (fn b)
+
+-- Unfold
+myIterate :: (a -> a) -> a -> [a]
+myIterate fn z = z : myIterate fn (fn z)
+
+myUnfoldr :: (b -> Maybe (a, b)) -> b -> [a]
+myUnfoldr fn b = case fn b of
+  Nothing -> myUnfoldr fn b
+  Just (a', b') -> a' : myUnfoldr fn b'
+
+betterIterate :: (a -> a) -> a -> [a]
+betterIterate f x = myUnfoldr f' x
+  where
+    f' x = Just (x, f x)
