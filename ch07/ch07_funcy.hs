@@ -1,7 +1,5 @@
 module Funcy where
 
-import System.Directory.Internal.Prelude (Integral)
-
 -- Anon functions
 fnIfOdd :: Integer -> (Integer -> Integer) -> Integer
 fnIfOdd = \n -> \f -> case odd n of

@@ -1,5 +1,7 @@
 module Ch12Exercises where
 
+import BinaryTree
+
 vowels :: [Char]
 vowels = "aeiouAEIOU"
 
@@ -140,3 +142,21 @@ betterIterate :: (a -> a) -> a -> [a]
 betterIterate f x = myUnfoldr f' x
   where
     f' x = Just (x, f x)
+
+-- TODO: revisit this; still not crystal clear on this
+unfold :: (a -> Maybe (a, b, a)) -> a -> BinaryTree b
+unfold f x = go x Leaf
+  where
+    go x' tree = case f x' of
+      Nothing -> Leaf
+      Just (a, b, c) -> Node (go a tree) b (go c tree)
+
+treeBuild :: Integer -> BinaryTree Integer
+treeBuild n =
+  unfold
+    ( \t ->
+        if t < n
+          then Just (t + 1, t, t + 1)
+          else Nothing
+    )
+    0
