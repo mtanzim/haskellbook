@@ -1,8 +1,10 @@
 module Main where
-import Hello
+
 import DogsRule
+import Hello
 
 main :: IO ()
 main = do
-  sayHello
+  name <- getLine
+  sayHello name
   dogs
