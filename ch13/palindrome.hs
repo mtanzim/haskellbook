@@ -13,7 +13,7 @@ checkPalindrome =
 palindrome :: IO ()
 palindrome = forever $ do
   hSetBuffering stdout NoBuffering
-  putStrLn $ "Type in a word to check if it's a palindrome: "
+  putStrLn "Type in a word to check if it's a palindrome: "
   line1 <- getLine
   case checkPalindrome line1 of
     True -> putStrLn "It's a palindrome!"
