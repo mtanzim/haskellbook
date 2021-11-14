@@ -1,7 +1,7 @@
 module Ch11Exercises where
 
 import Data.Char (chr, ord, toUpper)
-import qualified Data.Text.Internal.Fusion.Common as Char
+import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 -- TODO: name these functions better
 caesar :: Int -> Char -> Char
@@ -52,3 +52,12 @@ capitalizeParagraph s = foldr (\acc w -> acc ++ " " ++ w) "" (go (words s) True)
         ([], _) -> []
         (head : tail, True) -> capitalizeWord head : go tail ('.' `elem` head)
         (head : tail, False) -> head : go tail ('.' `elem` head)
+
+main :: IO ()
+main = do
+  hSetBuffering stdout NoBuffering
+  putStr "Please type in the word to caesar: "
+  word <- getLine
+  putStr "type in base word "
+  baseWord <- getLine
+  putStrLn (cipherVignere word baseWord)
