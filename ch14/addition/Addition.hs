@@ -13,6 +13,11 @@ dividedBy num denom = go num denom 0
       | n < d = (count, n)
       | otherwise = go (n - d) d (count + 1)
 
+mult :: (Eq a, Num a) => a -> a -> a
+mult a b
+  | b == 1 = a
+  | otherwise = a + mult a (b - 1)
+
 main :: IO ()
 main = hspec $ do
   describe "addition" $ do
@@ -22,3 +27,5 @@ main = hspec $ do
       (2 + 2) `shouldBe` 4
     it "22 divided by 5 is 4 remainder 2" $ do
       dividedBy 22 5 `shouldBe` (4, 2)
+    it "2 times 8 should be 16" $ do
+      mult 2 8 `shouldBe` 16
