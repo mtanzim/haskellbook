@@ -3,6 +3,7 @@ module Addition where
 import Data.Int (Int16, Int32, Int8)
 import Test.Hspec
 import Test.QuickCheck
+import Test.QuickCheck (Arbitrary)
 
 sayHello :: IO ()
 sayHello = do
@@ -37,6 +38,29 @@ genOrdering = elements [LT, GT, EQ]
 
 genChar :: Gen Char
 genChar = elements ['a' .. 'z']
+
+genTuple :: (Arbitrary a, Arbitrary b) => Gen (a, b)
+genTuple = do
+  a <- arbitrary
+  b <- arbitrary
+  return (a, b)
+
+genEither :: (Arbitrary a, Arbitrary b) => Gen (Either a b)
+genEither = do
+  a <- arbitrary
+  b <- arbitrary
+  elements [Left a, Right b]
+
+genMaybe :: Arbitrary a => Gen (Maybe a)
+genMaybe = do
+  a <- arbitrary
+  elements [Nothing, Just a]
+
+prop_additionGreater :: Int -> Bool
+prop_additionGreater x = x + 1 > x
+
+runQc :: IO ()
+runQc = quickCheck prop_additionGreater
 
 main :: IO ()
 main = hspec $ do
