@@ -1,5 +1,7 @@
 module UseQuickCheck where
 
+import Data.Char (toUpper)
+import Data.List (sort)
 import Test.Hspec
 import Test.QuickCheck
 
@@ -68,6 +70,32 @@ fnProp :: (String -> Int) -> String -> Bool
 fnProp f s = (f s) == (f $ s)
 
 runFnProp = quickCheck (fnProp (\s -> length s))
+
+-- TODO: missed a few exercises here
+
+capitalizeWord :: String -> String
+capitalizeWord (first : rest) = toUpper first : rest
+capitalizeWord [] = []
+
+twice f = f . f
+
+fourTimes = twice . twice
+
+f x = (capitalizeWord x == twice capitalizeWord x) && (capitalizeWord x == fourTimes capitalizeWord x)
+
+fCommon x = (sort x == twice sort x) && (sort x == fourTimes sort x)
+
+f' :: [Int] -> Bool
+f' = fCommon
+
+fChar :: [Char] -> Bool
+fChar = fCommon
+
+runIdempotence = quickCheck f
+
+runIdempotence' = quickCheck f'
+runIdempotenceChar = quickCheck fChar
+
 
 main :: IO ()
 main = hspec $ do
