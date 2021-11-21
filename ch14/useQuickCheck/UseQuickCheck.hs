@@ -94,8 +94,31 @@ fChar = fCommon
 runIdempotence = quickCheck f
 
 runIdempotence' = quickCheck f'
+
 runIdempotenceChar = quickCheck fChar
 
+reverseId :: String -> Bool
+reverseId s = (==) ((reverse . reverse) s) (id s)
+
+runReverseId = quickCheck reverseId
+
+foldrCons :: [Char] -> [Char] -> Bool
+foldrCons cs cs' = foldr (:) cs cs' == (++) cs cs'
+
+runFoldrCons = quickCheck foldrCons
+
+foldrConcat :: [[Char]] -> Bool
+foldrConcat cs = foldr (++) [] cs == concat cs
+
+runFoldrConcat = quickCheck foldrConcat
+
+takeLength :: Int -> [Char] -> Bool
+takeLength n xs = length (take n xs) == n
+
+runTakeLength = quickCheck takeLength
+
+readShow x = (read (show x)) == x
+runReadShow = quickCheck (readShow :: Double -> Bool)
 
 main :: IO ()
 main = hspec $ do
