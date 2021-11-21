@@ -123,6 +123,15 @@ test = hspec $ do
       fillInCharacter (Puzzle "cat" [Nothing, Nothing, Nothing] [] 20) 'a' True `shouldBe` Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20
     it "guessed incorrectly" $ do
       fillInCharacter (Puzzle "cat" [Nothing, Nothing, Nothing] [] 20) 'z' False `shouldBe` Puzzle "cat" [Nothing, Nothing, Nothing] ['z'] 19
+  describe "handleGuess" $ do
+    it "guessed correctly" $ do
+      handleGuess puzzle char `shouldBe` expectedPuzzle where
+        puzzle = Puzzle "cat" [Nothing, Nothing, Nothing] [] 20
+        char = 'a'
+        expectedPuzzle = show $ do
+          putStrLn "Word found, filling it in!"
+          return (Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20)
+
 
 main :: IO ()
 main = do
