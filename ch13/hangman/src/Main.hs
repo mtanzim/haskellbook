@@ -7,6 +7,8 @@ import Data.Maybe (isJust)
 import System.Exit (exitSuccess)
 import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 import System.Random (randomRIO)
+import Test.Hspec
+import Test.QuickCheck
 
 type WordList = [String]
 
@@ -41,7 +43,7 @@ randomWord wl = do
 randomWord' :: IO String
 randomWord' = gameWords >>= randomWord
 
-data Puzzle = Puzzle String [Maybe Char] [Char] Int
+data Puzzle = Puzzle String [Maybe Char] [Char] Int deriving (Eq)
 
 instance Show Puzzle where
   show (Puzzle _ discovered guessed guessesLeft) =
@@ -113,6 +115,14 @@ runGame puzzle = forever $ do
   case guess of
     [c] -> handleGuess puzzle c >>= runGame
     _ -> putStrLn "Guess must be a single character"
+
+test :: IO ()
+test = hspec $ do
+  describe "fillInCharacter" $ do
+    it "guessed correctly" $ do
+      fillInCharacter (Puzzle "cat" [Nothing, Nothing, Nothing] [] 20) 'a' True `shouldBe` Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20
+    it "guessed incorrectly" $ do
+      fillInCharacter (Puzzle "cat" [Nothing, Nothing, Nothing] [] 20) 'z' False `shouldBe` Puzzle "cat" [Nothing, Nothing, Nothing] ['z'] 19
 
 main :: IO ()
 main = do
