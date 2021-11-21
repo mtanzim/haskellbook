@@ -118,7 +118,16 @@ takeLength n xs = length (take n xs) == n
 runTakeLength = quickCheck takeLength
 
 readShow x = (read (show x)) == x
+
 runReadShow = quickCheck (readShow :: Double -> Bool)
+
+data Fool = Fulse | Frue deriving (Eq, Show)
+
+foolGen :: Gen Fool
+foolGen = elements [Fulse, Frue]
+
+foolGen' :: Gen Fool
+foolGen' = frequency [(3, return Fulse), (2, return Frue)]
 
 main :: IO ()
 main = hspec $ do
