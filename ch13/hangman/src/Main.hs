@@ -127,23 +127,23 @@ test = hspec $ do
       fillInCharacter (Puzzle "cat" [Nothing, Nothing, Nothing] [] 20) 'z' False `shouldBe` Puzzle "cat" [Nothing, Nothing, Nothing] ['z'] 19
   describe "handleGuessPure" $ do
     it "guessed correctly" $ do
-      handleGuessPure puzzle1 char1 `shouldBe` expectedPuzzle1
+      handleGuessPure puzzle1 char1 `shouldBe` exptected1
     it "guessed incorrectly" $ do
-      handleGuessPure puzzle2 char2 `shouldBe` expectedPuzzle2
+      handleGuessPure puzzle2 char2 `shouldBe` expected2
     it "already guessed" $ do
-      handleGuessPure puzzle3 char3 `shouldBe` expectedPuzzle3
+      handleGuessPure puzzle3 char3 `shouldBe` expected3
   where
     puzzle1 = Puzzle "cat" [Nothing, Nothing, Nothing] [] 20
     char1 = 'a'
-    expectedPuzzle1 = ("Word found, filling it in!", Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20)
+    exptected1 = ("Word found, filling it in!", Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20)
 
     puzzle2 = puzzle1
     char2 = 'b'
-    expectedPuzzle2 = ("Try again", Puzzle "cat" [Nothing, Nothing, Nothing] ['b'] 19)
+    expected2 = ("Try again", Puzzle "cat" [Nothing, Nothing, Nothing] ['b'] 19)
 
     puzzle3 = Puzzle "cat" [Nothing, Nothing, Nothing] ['a'] 15
     char3 = 'a'
-    expectedPuzzle3 = ("You already guessed that, pick something else", Puzzle "cat" [Nothing, Nothing, Nothing] ['a'] 15)
+    expected3 = ("You already guessed that, pick something else", Puzzle "cat" [Nothing, Nothing, Nothing] ['a'] 15)
 
 main :: IO ()
 main = do
