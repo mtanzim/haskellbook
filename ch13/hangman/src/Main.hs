@@ -79,7 +79,7 @@ handleGuessPure puzzle guess =
   case (charInWord puzzle guess, alreadyGuessed puzzle guess) of
     (_, True) -> ("You already guessed that, pick something else", puzzle)
     (True, _) ->
-      ("Word found, filling it in!",fillInCharacter puzzle guess True)
+      ("Word found, filling it in!", fillInCharacter puzzle guess True)
     (False, _) -> ("Try again", fillInCharacter puzzle guess False)
 
 handleGuess :: Puzzle -> Char -> IO Puzzle
@@ -89,18 +89,6 @@ handleGuess puzzle guess = do
   return newPuzzle
   where
     (msg, newPuzzle) = handleGuessPure puzzle guess
-
--- putStrLn $ "Your guess was: " ++ [guess]
--- case (charInWord puzzle guess, alreadyGuessed puzzle guess) of
---   (_, True) -> do
---     putStrLn "You already guessed that, pick something else"
---     return puzzle
---   (True, _) -> do
---     putStrLn "Word found, filling it in!"
---     return (fillInCharacter puzzle guess True)
---   (False, _) -> do
---     putStrLn "Try again"
---     return (fillInCharacter puzzle guess False)
 
 gameOver :: Puzzle -> IO ()
 gameOver (Puzzle wordToGuess _ _ guessesLeft) =
@@ -144,19 +132,19 @@ test = hspec $ do
       handleGuessPure puzzle2 char2 `shouldBe` expectedPuzzle2
     it "already guessed" $ do
       handleGuessPure puzzle3 char3 `shouldBe` expectedPuzzle3
-      where
-        puzzle1 = Puzzle "cat" [Nothing, Nothing, Nothing] [] 20
-        char1 = 'a'
-        expectedPuzzle1 = ("Word found, filling it in!", Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20)
-        
-        puzzle2 = puzzle1
-        char2 = 'b'
-        expectedPuzzle2 = ("Try again", Puzzle "cat" [Nothing, Nothing, Nothing] ['b'] 19)
-        
-        puzzle3 = Puzzle "cat" [Nothing, Nothing, Nothing] ['a'] 15
-        char3 = 'a'
-        expectedPuzzle3 = ("You already guessed that, pick something else", Puzzle "cat" [Nothing, Nothing, Nothing] ['a'] 15)
-        
+  where
+    puzzle1 = Puzzle "cat" [Nothing, Nothing, Nothing] [] 20
+    char1 = 'a'
+    expectedPuzzle1 = ("Word found, filling it in!", Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20)
+
+    puzzle2 = puzzle1
+    char2 = 'b'
+    expectedPuzzle2 = ("Try again", Puzzle "cat" [Nothing, Nothing, Nothing] ['b'] 19)
+
+    puzzle3 = Puzzle "cat" [Nothing, Nothing, Nothing] ['a'] 15
+    char3 = 'a'
+    expectedPuzzle3 = ("You already guessed that, pick something else", Puzzle "cat" [Nothing, Nothing, Nothing] ['a'] 15)
+
 main :: IO ()
 main = do
   hSetBuffering stdout NoBuffering
