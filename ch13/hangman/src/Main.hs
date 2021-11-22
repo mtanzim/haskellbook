@@ -74,19 +74,33 @@ fillInCharacter (Puzzle word filledInSoFar s guessesLeft) c isCorrect = Puzzle w
     zipper guessed wordChar guessChar = if wordChar == guessed then Just wordChar else guessChar
     newGuessesLeft = if isCorrect then guessesLeft else (guessesLeft - 1)
 
+handleGuessPure :: Puzzle -> Char -> (String, Puzzle)
+handleGuessPure puzzle guess =
+  case (charInWord puzzle guess, alreadyGuessed puzzle guess) of
+    (_, True) -> ("You already guessed that, pick something else", puzzle)
+    (True, _) ->
+      ("Word found, filling it in!",fillInCharacter puzzle guess True)
+    (False, _) -> ("Try again", fillInCharacter puzzle guess False)
+
 handleGuess :: Puzzle -> Char -> IO Puzzle
 handleGuess puzzle guess = do
   putStrLn $ "Your guess was: " ++ [guess]
-  case (charInWord puzzle guess, alreadyGuessed puzzle guess) of
-    (_, True) -> do
-      putStrLn "You already guessed that, pick something else"
-      return puzzle
-    (True, _) -> do
-      putStrLn "Word found, filling it in!"
-      return (fillInCharacter puzzle guess True)
-    (False, _) -> do
-      putStrLn "Try again"
-      return (fillInCharacter puzzle guess False)
+  putStrLn msg
+  return newPuzzle
+  where
+    (msg, newPuzzle) = handleGuessPure puzzle guess
+
+-- putStrLn $ "Your guess was: " ++ [guess]
+-- case (charInWord puzzle guess, alreadyGuessed puzzle guess) of
+--   (_, True) -> do
+--     putStrLn "You already guessed that, pick something else"
+--     return puzzle
+--   (True, _) -> do
+--     putStrLn "Word found, filling it in!"
+--     return (fillInCharacter puzzle guess True)
+--   (False, _) -> do
+--     putStrLn "Try again"
+--     return (fillInCharacter puzzle guess False)
 
 gameOver :: Puzzle -> IO ()
 gameOver (Puzzle wordToGuess _ _ guessesLeft) =
@@ -123,15 +137,13 @@ test = hspec $ do
       fillInCharacter (Puzzle "cat" [Nothing, Nothing, Nothing] [] 20) 'a' True `shouldBe` Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20
     it "guessed incorrectly" $ do
       fillInCharacter (Puzzle "cat" [Nothing, Nothing, Nothing] [] 20) 'z' False `shouldBe` Puzzle "cat" [Nothing, Nothing, Nothing] ['z'] 19
-  describe "handleGuess" $ do
+  describe "handleGuessPure" $ do
     it "guessed correctly" $ do
-      handleGuess puzzle char `shouldBe` expectedPuzzle where
-        puzzle = Puzzle "cat" [Nothing, Nothing, Nothing] [] 20
-        char = 'a'
-        expectedPuzzle = show $ do
-          putStrLn "Word found, filling it in!"
-          return (Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20)
-
+      handleGuessPure puzzle char `shouldBe` expectedPuzzle
+  where
+    puzzle = Puzzle "cat" [Nothing, Nothing, Nothing] [] 20
+    char = 'a'
+    expectedPuzzle = ("Word found, filling it in!", Puzzle "cat" [Nothing, Just 'a', Nothing] ['a'] 20)
 
 main :: IO ()
 main = do
