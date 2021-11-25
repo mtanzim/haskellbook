@@ -48,10 +48,26 @@ newtype First' a = First' {getFirst :: Optional a}
   deriving (Eq, Show)
 
 instance Semigroup (First' a) where
-  (<>) = undefined
+  (<>) (First' (Only a)) (First' (Only a')) = First' (Only a)
+  (<>) (First' Nada) (First' (Only a')) = First' (Only a')
+  (<>) (First' (Only a)) (First' Nada) = First' (Only a)
+  (<>) _ _ = First' Nada
 
 instance Monoid (First' a) where
   mempty = undefined
+
+-- arbFirstGen :: Gen (First' a)
+-- arbFirstGen = do
+--   a <- arbitrary
+--   return (First' (Only a))
+
+-- instance Arbitrary (Optional a) where
+--   arbitrary = do
+--     a :: String <- arbitrary
+--     frequency [(1, return (Only a)), (1, return Nada)]
+
+-- instance Arbitrary (First' a) where
+--   arbitrary = arbFirstGen
 
 firstMappend :: First' a -> First' a -> First' a
 firstMappend = mappend
@@ -69,8 +85,8 @@ monoidLeftIdentity a = (mempty <> a) == a
 monoidRightIdentity :: (Eq m, Monoid m) => m -> Bool
 monoidRightIdentity a = (a <> mempty) == a
 
-main :: IO ()
-main = do
-  quickCheck (monoidAssoc :: FirstMappend)
-  quickCheck (monoidLeftIdentity :: FstId)
-  quickCheck (monoidRightIdentity :: FstId)
+-- main :: IO ()
+-- main = do
+--   quickCheck (monoidAssoc :: FirstMappend)
+--   quickCheck (monoidLeftIdentity :: FstId)
+--   quickCheck (monoidRightIdentity :: FstId)
