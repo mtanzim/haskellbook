@@ -54,20 +54,15 @@ instance Semigroup (First' a) where
   (<>) _ _ = First' Nada
 
 instance Monoid (First' a) where
-  mempty = undefined
+  mempty = First' Nada
 
--- arbFirstGen :: Gen (First' a)
--- arbFirstGen = do
---   a <- arbitrary
---   return (First' (Only a))
+arbFirstGen :: Arbitrary a => Gen (First' a)
+arbFirstGen = do
+  a <- arbitrary
+  frequency [(1, return (First' (Only a))), (1, return (First' Nada))]
 
--- instance Arbitrary (Optional a) where
---   arbitrary = do
---     a :: String <- arbitrary
---     frequency [(1, return (Only a)), (1, return Nada)]
-
--- instance Arbitrary (First' a) where
---   arbitrary = arbFirstGen
+instance Arbitrary a => Arbitrary (First' a) where
+  arbitrary = arbFirstGen
 
 firstMappend :: First' a -> First' a -> First' a
 firstMappend = mappend
@@ -85,8 +80,8 @@ monoidLeftIdentity a = (mempty <> a) == a
 monoidRightIdentity :: (Eq m, Monoid m) => m -> Bool
 monoidRightIdentity a = (a <> mempty) == a
 
--- main :: IO ()
--- main = do
---   quickCheck (monoidAssoc :: FirstMappend)
---   quickCheck (monoidLeftIdentity :: FstId)
---   quickCheck (monoidRightIdentity :: FstId)
+main :: IO ()
+main = do
+  quickCheck (monoidAssoc :: FirstMappend)
+  quickCheck (monoidLeftIdentity :: FstId)
+  quickCheck (monoidRightIdentity :: FstId)
