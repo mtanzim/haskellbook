@@ -48,8 +48,23 @@ type TwoAssoc = Two String [Int] -> Two String [Int] -> Two String [Int] -> Bool
 
 -- TODO: `Three` and `Four` would be the same?
 
+newtype BoolConj = BoolConj Bool deriving (Show, Eq)
+
+instance Semigroup BoolConj where
+  BoolConj True <> BoolConj True = BoolConj True
+  _ <> _ = BoolConj False
+
+boolConjGen :: Gen BoolConj
+boolConjGen = elements [BoolConj True, BoolConj False]
+
+instance Arbitrary BoolConj where
+  arbitrary = boolConjGen
+
+type BoolConjAssoc = BoolConj -> BoolConj -> BoolConj -> Bool
+
 main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: IdentityAssoc)
   quickCheck (semigroupAssoc :: TrivAssoc)
   quickCheck (semigroupAssoc :: TwoAssoc)
+  quickCheck (semigroupAssoc :: BoolConjAssoc)
