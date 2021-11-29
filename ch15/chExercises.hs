@@ -25,12 +25,31 @@ identityGen = do
 instance Arbitrary a => Arbitrary (Identity a) where
   arbitrary = identityGen
 
-instance (Eq a, Arbitrary a, Semigroup a) => Semigroup (Identity a) where
+instance Semigroup a => Semigroup (Identity a) where
   (Identity a) <> (Identity a') = Identity (a <> a')
 
 type IdentityAssoc = Identity String -> Identity String -> Identity String -> Bool
+
+data Two a b = Two a b deriving (Eq, Show)
+
+instance (Semigroup a, Semigroup b) => Semigroup (Two a b) where
+  (Two a b) <> (Two a' b') = Two (a <> a') (b <> b')
+
+twoGen :: (Arbitrary a, Arbitrary b) => Gen (Two a b)
+twoGen = do
+  a <- arbitrary
+  b <- arbitrary
+  return (Two a b)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
+  arbitrary = twoGen
+
+type TwoAssoc = Two String [Int] -> Two String [Int] -> Two String [Int] -> Bool
+
+-- TODO: `Three` and `Four` would be the same?
 
 main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: IdentityAssoc)
   quickCheck (semigroupAssoc :: TrivAssoc)
+  quickCheck (semigroupAssoc :: TwoAssoc)
