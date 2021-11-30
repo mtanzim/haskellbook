@@ -1,6 +1,9 @@
 module ChapterExercises where
 
+import Data.Semigroup
 import Test.QuickCheck
+import Test.QuickCheck (CoArbitrary)
+import Test.QuickCheck.Arbitrary (Arbitrary)
 
 data Trivial = Trivial deriving (Eq, Show)
 
@@ -95,6 +98,24 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Or a b) where
 
 type OrAssoc = (Or Int String) -> (Or Int String) -> (Or Int String) -> Bool
 
+newtype Combine a b = Combine {unCombine :: a -> b}
+
+instance Show (Combine a b) where
+  show _ = "hello"
+
+instance Eq (Combine a b) where
+  (==) _ _ = True
+
+instance Semigroup b => Semigroup (Combine a b) where
+  (Combine f) <> (Combine g) = Combine (f <> g)
+
+combineGen :: (CoArbitrary f, Arbitrary b) => Gen (Combine f b)
+combineGen = do
+  f <- arbitrary
+  return (Combine {unCombine = f})
+
+-- type CombineAssoc = Combine (Int -> [Int]) Int -> Combine (Int -> [Int]) Int -> Combine (Int -> [Int]) Int -> Bool
+
 main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: IdentityAssoc)
@@ -103,3 +124,4 @@ main = do
   quickCheck (semigroupAssoc :: BoolConjAssoc)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
   quickCheck (semigroupAssoc :: OrAssoc)
+-- quickCheck (semigroupAssoc :: CombineAssoc)
