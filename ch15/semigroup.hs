@@ -1,9 +1,7 @@
-module ChapterExercises where
+module Semigroup where
 
 import Data.Semigroup
 import Test.QuickCheck
-import Test.QuickCheck (CoArbitrary)
-import Test.QuickCheck.Arbitrary (Arbitrary)
 
 data Trivial = Trivial deriving (Eq, Show)
 
@@ -101,7 +99,7 @@ type OrAssoc = (Or Int String) -> (Or Int String) -> (Or Int String) -> Bool
 newtype Combine a b = Combine {unCombine :: a -> b}
 
 instance Show (Combine a b) where
-  show _ = "hello"
+  show _ = "Combine"
 
 -- TODO: fix this
 instance Eq (Combine a b) where
@@ -121,6 +119,38 @@ instance (CoArbitrary a, Arbitrary b) => Arbitrary (Combine a b) where
 
 type CombineAssoc = Combine (String -> [Int]) String -> Combine (String -> [Int]) String -> Combine (String -> [Int]) String -> Bool
 
+newtype Comp a = Comp {unComp :: a -> a}
+
+instance Semigroup (Comp a) where
+  (Comp f) <> (Comp g) = Comp (g . f)
+
+-- stolen from the webs
+genFunc :: (CoArbitrary a, Arbitrary a) => Gen (a -> a)
+genFunc = arbitrary
+
+genComp :: (CoArbitrary a, Arbitrary a) => Gen (Comp a)
+genComp = do
+  f <- genFunc
+  return (Comp {unComp = f})
+
+data Validation a b = Fail a | Succ b deriving (Eq, Show)
+
+instance Semigroup a => Semigroup (Validation a b) where
+  Succ a <> _ = Succ a
+  Fail b <> Fail b' = Fail (b <> b')
+  Fail _ <> Succ a = Succ a
+
+genValidation :: (Arbitrary a, Arbitrary b) => Gen (Validation a b)
+genValidation = do
+  a <- arbitrary
+  b <- arbitrary
+  elements [Succ a, Fail b]
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Validation a b) where
+  arbitrary = genValidation
+
+type ValidationAssoc = (Validation String [Int]) -> (Validation String [Int]) -> (Validation String [Int]) -> Bool
+
 main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: IdentityAssoc)
@@ -130,3 +160,4 @@ main = do
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
   quickCheck (semigroupAssoc :: OrAssoc)
   quickCheck (semigroupAssoc :: CombineAssoc)
+  quickCheck (semigroupAssoc :: ValidationAssoc)
