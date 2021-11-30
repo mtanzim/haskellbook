@@ -103,6 +103,7 @@ newtype Combine a b = Combine {unCombine :: a -> b}
 instance Show (Combine a b) where
   show _ = "hello"
 
+-- TODO: fix this
 instance Eq (Combine a b) where
   (==) _ _ = True
 
