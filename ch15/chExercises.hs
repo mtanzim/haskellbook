@@ -109,12 +109,16 @@ instance Eq (Combine a b) where
 instance Semigroup b => Semigroup (Combine a b) where
   (Combine f) <> (Combine g) = Combine (f <> g)
 
+-- TODO: study CoArbitrary
 combineGen :: (CoArbitrary f, Arbitrary b) => Gen (Combine f b)
 combineGen = do
   f <- arbitrary
-  return (Combine {unCombine = f})
+  return (Combine f)
 
--- type CombineAssoc = Combine (Int -> [Int]) Int -> Combine (Int -> [Int]) Int -> Combine (Int -> [Int]) Int -> Bool
+instance (CoArbitrary a, Arbitrary b) => Arbitrary (Combine a b) where
+  arbitrary = combineGen
+
+type CombineAssoc = Combine (String -> [Int]) String -> Combine (String -> [Int]) String -> Combine (String -> [Int]) String -> Bool
 
 main :: IO ()
 main = do
@@ -124,4 +128,4 @@ main = do
   quickCheck (semigroupAssoc :: BoolConjAssoc)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
   quickCheck (semigroupAssoc :: OrAssoc)
--- quickCheck (semigroupAssoc :: CombineAssoc)
+  quickCheck (semigroupAssoc :: CombineAssoc)
