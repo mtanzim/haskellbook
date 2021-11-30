@@ -77,6 +77,24 @@ instance Arbitrary BoolDisj where
 
 type BoolDisjAssoc = BoolDisj -> BoolDisj -> BoolDisj -> Bool
 
+data Or a b = Fst a | Snd b deriving (Eq, Show)
+
+instance Semigroup (Or a b) where
+  (<>) (Snd b) _ = Snd b
+  (<>) (Fst _) (Snd b) = Snd b
+  (<>) (Fst a) (Fst a') = Fst a'
+
+orGen :: (Arbitrary a, Arbitrary b) => Gen (Or a b)
+orGen = do
+  a <- arbitrary
+  b <- arbitrary
+  elements [Fst a, Snd b]
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Or a b) where
+  arbitrary = orGen
+
+type OrAssoc = (Or Int String) -> (Or Int String) -> (Or Int String) -> Bool
+
 main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: IdentityAssoc)
@@ -84,3 +102,4 @@ main = do
   quickCheck (semigroupAssoc :: TwoAssoc)
   quickCheck (semigroupAssoc :: BoolConjAssoc)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
+  quickCheck (semigroupAssoc :: OrAssoc)
