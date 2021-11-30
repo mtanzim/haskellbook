@@ -62,9 +62,25 @@ instance Arbitrary BoolConj where
 
 type BoolConjAssoc = BoolConj -> BoolConj -> BoolConj -> Bool
 
+newtype BoolDisj = BoolDisj Bool deriving (Show, Eq)
+
+instance Semigroup BoolDisj where
+  BoolDisj True <> _ = BoolDisj True
+  _ <> BoolDisj True = BoolDisj True
+  _ <> _ = BoolDisj False
+
+boolDisjGen :: Gen BoolDisj
+boolDisjGen = elements [BoolDisj True, BoolDisj False]
+
+instance Arbitrary BoolDisj where
+  arbitrary = boolDisjGen
+
+type BoolDisjAssoc = BoolDisj -> BoolDisj -> BoolDisj -> Bool
+
 main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: IdentityAssoc)
   quickCheck (semigroupAssoc :: TrivAssoc)
   quickCheck (semigroupAssoc :: TwoAssoc)
   quickCheck (semigroupAssoc :: BoolConjAssoc)
+  quickCheck (semigroupAssoc :: BoolDisjAssoc)
