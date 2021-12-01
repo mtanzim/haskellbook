@@ -5,8 +5,8 @@ testInput = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
 
 day1Input :: IO [Integer]
 day1Input = do
-  dict <- readFile "day1Input.txt"
-  return (map (\x -> read x :: Integer) (lines dict))
+  numbers <- readFile "day1Input.txt"
+  return (map (\x -> read x :: Integer) (lines numbers))
 
 numIncreases :: (Ord a, Num p) => [a] -> p
 numIncreases lst = go lst 0
