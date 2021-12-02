@@ -50,6 +50,10 @@ data Two a b = Two a b deriving (Eq, Show)
 instance (Semigroup a, Semigroup b) => Semigroup (Two a b) where
   (Two a b) <> (Two a' b') = Two (a <> a') (b <> b')
 
+instance (Monoid a, Monoid b) => Monoid (Two a b) where
+  mappend = (<>)
+  mempty = Two mempty mempty
+
 twoGen :: (Arbitrary a, Arbitrary b) => Gen (Two a b)
 twoGen = do
   a <- arbitrary
@@ -174,6 +178,8 @@ main = do
   quickCheck (monoidLeftIdentity :: (Identity String) -> Bool)
   quickCheck (monoidRightIdentity :: (Identity String) -> Bool)
   quickCheck (semigroupAssoc :: TwoAssoc)
+  quickCheck (monoidLeftIdentity :: (Two String [Double]) -> Bool)
+  quickCheck (monoidRightIdentity :: (Two [Integer] String) -> Bool)
   quickCheck (semigroupAssoc :: BoolConjAssoc)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
   quickCheck (semigroupAssoc :: OrAssoc)
