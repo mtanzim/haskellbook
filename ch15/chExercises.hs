@@ -73,6 +73,10 @@ instance Semigroup BoolConj where
   BoolConj True <> BoolConj True = BoolConj True
   _ <> _ = BoolConj False
 
+instance Monoid BoolConj where
+  mappend = (<>)
+  mempty = BoolConj True
+
 boolConjGen :: Gen BoolConj
 boolConjGen = elements [BoolConj True, BoolConj False]
 
@@ -181,6 +185,8 @@ main = do
   quickCheck (monoidLeftIdentity :: (Two String [Double]) -> Bool)
   quickCheck (monoidRightIdentity :: (Two [Integer] String) -> Bool)
   quickCheck (semigroupAssoc :: BoolConjAssoc)
+  quickCheck (monoidLeftIdentity :: BoolConj -> Bool)
+  quickCheck (monoidRightIdentity :: BoolConj -> Bool)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
   quickCheck (semigroupAssoc :: OrAssoc)
   quickCheck (semigroupAssoc :: CombineAssoc)
