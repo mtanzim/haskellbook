@@ -1,4 +1,4 @@
-module Semigroup where
+module ChExercises where
 
 import Data.Semigroup
 import Test.QuickCheck
@@ -8,11 +8,21 @@ data Trivial = Trivial deriving (Eq, Show)
 instance Semigroup Trivial where
   _ <> _ = Trivial
 
+instance Monoid Trivial where
+  mappend = (<>)
+  mempty = Trivial
+
 instance Arbitrary Trivial where
   arbitrary = return Trivial
 
 semigroupAssoc :: (Eq m, Semigroup m) => m -> m -> m -> Bool
 semigroupAssoc a b c = (a <> (b <> c)) == ((a <> b) <> c)
+
+monoidLeftIdentity :: (Eq m, Monoid m) => m -> Bool
+monoidLeftIdentity m = mempty <> m == m
+
+monoidRightIdentity :: (Eq m, Monoid m) => m -> Bool
+monoidRightIdentity m = m <> mempty == m
 
 type TrivAssoc = Trivial -> Trivial -> Trivial -> Bool
 
@@ -155,6 +165,8 @@ main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: IdentityAssoc)
   quickCheck (semigroupAssoc :: TrivAssoc)
+  quickCheck (monoidLeftIdentity :: Trivial -> Bool)
+  quickCheck (monoidRightIdentity :: Trivial -> Bool)
   quickCheck (semigroupAssoc :: TwoAssoc)
   quickCheck (semigroupAssoc :: BoolConjAssoc)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
