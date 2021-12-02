@@ -178,6 +178,8 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Validation a b) where
 
 type ValidationAssoc = (Validation String [Int]) -> (Validation String [Int]) -> (Validation String [Int]) -> Bool
 
+-- TODO: Mem monoid, Combine monoid, Comp monoid
+
 main :: IO ()
 main = do
   quickCheck (semigroupAssoc :: TrivAssoc)
