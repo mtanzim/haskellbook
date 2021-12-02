@@ -92,6 +92,11 @@ instance Semigroup BoolDisj where
   _ <> BoolDisj True = BoolDisj True
   _ <> _ = BoolDisj False
 
+instance Monoid BoolDisj where
+  mappend = (<>)
+  mempty = BoolDisj False
+
+
 boolDisjGen :: Gen BoolDisj
 boolDisjGen = elements [BoolDisj True, BoolDisj False]
 
@@ -188,6 +193,8 @@ main = do
   quickCheck (monoidLeftIdentity :: BoolConj -> Bool)
   quickCheck (monoidRightIdentity :: BoolConj -> Bool)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
+  quickCheck (monoidLeftIdentity :: BoolDisj -> Bool)
+  quickCheck (monoidRightIdentity :: BoolDisj -> Bool)
   quickCheck (semigroupAssoc :: OrAssoc)
   quickCheck (semigroupAssoc :: CombineAssoc)
   quickCheck (semigroupAssoc :: ValidationAssoc)
