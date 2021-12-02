@@ -39,6 +39,10 @@ instance Arbitrary a => Arbitrary (Identity a) where
 instance Semigroup a => Semigroup (Identity a) where
   (Identity a) <> (Identity a') = Identity (a <> a')
 
+instance Monoid a => Monoid (Identity a) where
+  mappend = (<>)
+  mempty = Identity mempty
+
 type IdentityAssoc = Identity String -> Identity String -> Identity String -> Bool
 
 data Two a b = Two a b deriving (Eq, Show)
@@ -163,10 +167,12 @@ type ValidationAssoc = (Validation String [Int]) -> (Validation String [Int]) ->
 
 main :: IO ()
 main = do
-  quickCheck (semigroupAssoc :: IdentityAssoc)
   quickCheck (semigroupAssoc :: TrivAssoc)
   quickCheck (monoidLeftIdentity :: Trivial -> Bool)
   quickCheck (monoidRightIdentity :: Trivial -> Bool)
+  quickCheck (semigroupAssoc :: IdentityAssoc)
+  quickCheck (monoidLeftIdentity :: (Identity String) -> Bool)
+  quickCheck (monoidRightIdentity :: (Identity String) -> Bool)
   quickCheck (semigroupAssoc :: TwoAssoc)
   quickCheck (semigroupAssoc :: BoolConjAssoc)
   quickCheck (semigroupAssoc :: BoolDisjAssoc)
