@@ -3,6 +3,27 @@ module AdventDay3 where
 import Data.Char (digitToInt)
 import Data.List (foldl')
 
+day3Input :: IO [String]
+day3Input = do
+  binaryEntries <- readFile "day3Input.txt"
+  return (lines binaryEntries)
+
+day3Limit :: IO Int
+day3Limit = do
+  entries <- day3Input
+  return (length (head entries) - 1)
+
+main :: IO ()
+main = do
+  input <- day3Input
+  limit <- day3Limit
+  print (powerConsumption input limit)
+  print (lifeSupportRating input limit)
+  where
+    powerConsumption input limit = binCharToDec (gammaBits limit input) * binCharToDec (epsilonBits limit input)
+    -- TODO: this is very slow, refactor after analyzing
+    lifeSupportRating input limit = binCharToDec (oxygenRating input 0 limit input) * binCharToDec (co2Rating input 0 limit input)
+
 testInput :: [String]
 testInput = ["00100", "11110", "10110"]
 
@@ -42,22 +63,3 @@ co2Rating lst curIdx limit input = co2Rating (getFiltered limit lst) (curIdx + 1
 -- stolen from: https://stackoverflow.com/a/26961027
 binCharToDec :: String -> Int
 binCharToDec = foldl' (\acc x -> acc * 2 + digitToInt x) 0
-
-day3Input :: IO [String]
-day3Input = do
-  binaryEntries <- readFile "day3Input.txt"
-  return (lines binaryEntries)
-
-day3Limit :: IO Int
-day3Limit = do
-  entries <- day3Input
-  return (length (head entries) - 1)
-
-main :: IO ()
-main = do
-  input <- day3Input
-  limit <- day3Limit
-  print (binCharToDec (gammaBits limit input) * binCharToDec (epsilonBits limit input))
-  print (lifeSupportRating input limit)
-  where
-    lifeSupportRating input limit = binCharToDec (oxygenRating input 0 limit input) * binCharToDec (co2Rating input 0 limit input)
