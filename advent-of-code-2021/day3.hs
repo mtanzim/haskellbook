@@ -6,16 +6,11 @@ import Data.List (foldl')
 testInput :: [String]
 testInput = ["00100", "11110", "10110"]
 
-numCharsPerEntry :: Int
-numCharsPerEntry = length (head testInput)
-
 curCol :: Int -> Int -> [[a]] -> [a]
 curCol curIdx maxIdx input = if curIdx > maxIdx then [] else map (!! curIdx) input
 
-gatherColumns :: [[a]] -> [[a]]
-gatherColumns input = map (\b -> curCol b limit input) [0 .. limit]
-  where
-    limit = numCharsPerEntry - 1
+gatherColumns :: Int -> [[a]] -> [[a]]
+gatherColumns limit input = map (\b -> curCol b limit input) [0 .. limit]
 
 countZeros :: String -> Int
 countZeros = length . filter (== '0')
@@ -23,11 +18,11 @@ countZeros = length . filter (== '0')
 countOnes :: String -> Int
 countOnes = length . filter (== '1')
 
-gammaBits :: [String] -> String
-gammaBits = map (\lst -> if countZeros lst > countOnes lst then '0' else '1') . gatherColumns
+gammaBits :: Int -> [String] -> String
+gammaBits limit = map (\lst -> if countZeros lst > countOnes lst then '0' else '1') . gatherColumns limit
 
-epsilonBits :: [String] -> String
-epsilonBits = map (\lst -> if countZeros lst > countOnes lst then '1' else '0') . gatherColumns
+epsilonBits :: Int -> [String] -> String
+epsilonBits limit = map (\lst -> if countZeros lst > countOnes lst then '1' else '0') . gatherColumns limit
 
 -- stolen from: https://stackoverflow.com/a/26961027
 binCharToDec :: String -> Int
@@ -38,9 +33,13 @@ day3Input = do
   binaryEntries <- readFile "day3Input.txt"
   return (lines binaryEntries)
 
--- main = (binCharToDec (gammaBits testInput) * binCharToDec (epsilonBits testInput))
+day3Limit :: IO Int
+day3Limit = do
+  entries <- day3Input
+  return (length (head entries) - 1)
 
 main :: IO ()
 main = do
   input <- day3Input
-  print (binCharToDec (gammaBits input) * binCharToDec (epsilonBits input))
+  limit <- day3Limit
+  print (binCharToDec (gammaBits limit input) * binCharToDec (epsilonBits limit input))
