@@ -1,5 +1,7 @@
 module Day4 where
 
+import Data.List.Split
+
 testDraws :: [Integer]
 testDraws = [7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19, 3, 26, 1]
 
@@ -78,3 +80,16 @@ main = runGame testGame (map prepareScorePerBoard testGame) testDraws
 
 debugGame :: [MarkedGameBoard]
 debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardB) testDraws
+
+day4Draws :: IO [Integer]
+day4Draws = do
+  draws <- readFile "day4Draws.txt"
+  return (map (\x -> read x :: Integer) (splitOn "," draws))
+
+day4Boards :: IO [[[Integer]]]
+day4Boards = do
+  boards <- readFile "day4Boards.txt"
+  let chunks = chunksOf 5 (filter (/= "") (lines boards))
+      chunks' = map (\chunk -> (map (\line -> words line) chunk)) chunks
+      chunks'' = map (\chunk -> (map (map (\x -> read x :: Integer)) chunk)) chunks'
+   in return (chunks'')
