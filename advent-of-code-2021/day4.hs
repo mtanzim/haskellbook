@@ -3,12 +3,18 @@ module Day4 where
 testDraws :: [Integer]
 testDraws = [7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19, 3, 26, 1]
 
--- testDraws :: [Integer]
--- testDraws = [22, 13, 17, 11, 0, 44]
-
 type GameBoard = [[Integer]]
 
 type MarkedGameBoard = [[(Integer, Bool)]]
+
+testBoardA :: GameBoard
+testBoardA =
+  [ [22, 13, 17, 11, 0],
+    [8, 2, 23, 4, 24],
+    [21, 9, 14, 16, 7],
+    [6, 10, 3, 18, 5],
+    [1, 12, 20, 15, 19]
+  ]
 
 testBoardB :: GameBoard
 testBoardB =
@@ -29,7 +35,7 @@ testBoardC =
   ]
 
 testGame :: [GameBoard]
-testGame = [testBoardB, testBoardC]
+testGame = [testBoardA, testBoardB, testBoardC]
 
 prepareScorePerBoard :: GameBoard -> MarkedGameBoard
 prepareScorePerBoard = map (map (\element -> (element, False)))
@@ -58,13 +64,14 @@ countScoreFromUnMarked = sum . map fst . filter (not . snd) . concat
 
 runGame :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
 runGame _ _ [] = Nothing
-runGame boards latestMarkedBoards (curDraw : rest) =
-  let currentMarkedBoards = (map (drawNumber curDraw) latestMarkedBoards)
+runGame boards lastMarkedBoards (curDraw : rest) =
+  let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
       currentWinners = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) currentMarkedBoards
       winningGame = head currentWinners
-   in if length currentWinners > 0
-        then Just (curDraw * countScoreFromUnMarked winningGame)
-        else runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
+   in case currentWinners of
+        [winningBoard : _] -> Just (curDraw * countScoreFromUnMarked winningGame)
+        [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
+        _ -> Nothing
 
 main :: Maybe Integer
 main = runGame testGame (map prepareScorePerBoard testGame) testDraws
