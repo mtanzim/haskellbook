@@ -12,11 +12,11 @@ type MarkedGameBoard = [[(Integer, Bool)]]
 
 testBoardA :: GameBoard
 testBoardA =
-  [ [22, 13, 17, 11, 0],
-    [8, 2, 23, 4, 24],
-    [21, 9, 14, 16, 7],
-    [6, 10, 3, 18, 5],
-    [1, 12, 20, 15, 19]
+  [ [14, 21, 17, 24, 4],
+    [10, 16, 15, 9, 19],
+    [18, 8, 23, 26, 20],
+    [22, 11, 13, 6, 5],
+    [2, 0, 12, 3, 7]
   ]
 
 testGame :: [GameBoard]
@@ -45,7 +45,7 @@ runGamePerBoard markedBoard (curDraw : rest) =
         else runGamePerBoard (drawNumber curDraw markedBoard) rest
 
 countScoreFromUnMarked :: MarkedGameBoard -> Integer
-countScoreFromUnMarked = sum . map fst . filter snd . concat
+countScoreFromUnMarked = sum . map fst . filter (not . snd) . concat
 
 debugGame :: [MarkedGameBoard]
 debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardA) testDraws
