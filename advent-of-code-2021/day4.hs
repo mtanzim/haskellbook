@@ -2,12 +2,78 @@ module Day4 where
 
 import Data.List.Split
 
-testDraws :: [Integer]
-testDraws = [7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19, 3, 26, 1]
-
 type GameBoard = [[Integer]]
 
 type MarkedGameBoard = [[(Integer, Bool)]]
+
+day4Draws :: IO [Integer]
+day4Draws = do
+  draws <- readFile "day4Draws.txt"
+  return (map (\x -> read x :: Integer) (splitOn "," draws))
+
+day4Boards :: IO [GameBoard]
+day4Boards = do
+  boards <- readFile "day4Boards.txt"
+  let chunks = chunksOf 5 (filter (/= "") (lines boards))
+      chunks' = map (\chunk -> (map (\line -> words line) chunk)) chunks
+      gameBoards = map (\chunk -> (map (map (\x -> read x :: Integer)) chunk)) chunks'
+   in return (gameBoards)
+
+main :: IO ()
+main = do
+  boards <- day4Boards
+  draws <- day4Draws
+  print (runGame boards (map prepareMarkedBoard boards) draws)
+  print (runGameLoser boards (map prepareMarkedBoard boards) draws)
+
+prepareMarkedBoard :: GameBoard -> MarkedGameBoard
+prepareMarkedBoard = map (map (\element -> (element, False)))
+
+convertBackToBoard :: MarkedGameBoard -> GameBoard
+convertBackToBoard = map (map (fst))
+
+drawNumber :: Integer -> MarkedGameBoard -> MarkedGameBoard
+drawNumber number = map (map (\(element, current) -> (element, current || (number == element))))
+
+checkRowsForWin :: MarkedGameBoard -> Bool
+checkRowsForWin = any (all (\(_, isPicked) -> isPicked))
+
+transposeBoard :: MarkedGameBoard -> MarkedGameBoard
+transposeBoard scoreboard =
+  let boardLength = length (head scoreboard) - 1
+   in map (\curIdx -> map (!! curIdx) scoreboard) [0 .. boardLength]
+
+countScoreFromUnMarked :: MarkedGameBoard -> Integer
+countScoreFromUnMarked = sum . map fst . filter (not . snd) . concat
+
+runGame :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
+runGame _ _ [] = Nothing
+runGame boards lastMarkedBoards (curDraw : rest) =
+  let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
+      currentWinners = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) currentMarkedBoards
+   in case currentWinners of
+        winningBoard : _ -> Just (curDraw * countScoreFromUnMarked winningBoard)
+        [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
+
+runGameLoser :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
+runGameLoser _ _ [] = Nothing
+runGameLoser boards lastMarkedBoards (curDraw : rest) =
+  let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
+      currentLosers = filter (\markedBoard -> not (checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard))) currentMarkedBoards
+   in if (length currentLosers) == 1
+        then runGame (map convertBackToBoard currentLosers) currentLosers rest
+        else runGameLoser boards (map (drawNumber curDraw) currentMarkedBoards) rest
+
+-- DEBUG STUFF
+
+main' :: Maybe Integer
+main' = runGame testGame (map prepareMarkedBoard testGame) testDraws
+
+mainLoser' :: Maybe Integer
+mainLoser' = runGameLoser testGame (map prepareMarkedBoard testGame) testDraws
+
+debugGame :: [MarkedGameBoard]
+debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareMarkedBoard testBoardB) testDraws
 
 testBoardA :: GameBoard
 testBoardA =
@@ -39,22 +105,8 @@ testBoardC =
 testGame :: [GameBoard]
 testGame = [testBoardA, testBoardB, testBoardC]
 
-prepareScorePerBoard :: GameBoard -> MarkedGameBoard
-prepareScorePerBoard = map (map (\element -> (element, False)))
-
-convertBackToBoard :: MarkedGameBoard -> GameBoard
-convertBackToBoard = map (map (fst))
-
-drawNumber :: Integer -> MarkedGameBoard -> MarkedGameBoard
-drawNumber number = map (map (\(element, current) -> (element, current || (number == element))))
-
-checkRowsForWin :: MarkedGameBoard -> Bool
-checkRowsForWin = any (all (\(_, isPicked) -> isPicked))
-
-transposeBoard :: MarkedGameBoard -> MarkedGameBoard
-transposeBoard scoreboard =
-  let boardLength = length (head scoreboard) - 1
-   in map (\curIdx -> map (!! curIdx) scoreboard) [0 .. boardLength]
+testDraws :: [Integer]
+testDraws = [7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19, 3, 26, 1]
 
 runGamePerBoard :: MarkedGameBoard -> [Integer] -> Integer
 runGamePerBoard markedBoard [] = -1
@@ -63,53 +115,3 @@ runGamePerBoard markedBoard (curDraw : rest) =
    in if checkRowsForWin latestMarkedBoard || checkRowsForWin (transposeBoard latestMarkedBoard)
         then curDraw * countScoreFromUnMarked latestMarkedBoard
         else runGamePerBoard (drawNumber curDraw markedBoard) rest
-
-countScoreFromUnMarked :: MarkedGameBoard -> Integer
-countScoreFromUnMarked = sum . map fst . filter (not . snd) . concat
-
-runGame :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
-runGame _ _ [] = Nothing
-runGame boards lastMarkedBoards (curDraw : rest) =
-  let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
-      currentWinners = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) currentMarkedBoards
-   in case currentWinners of
-        winningBoard : _ -> Just (curDraw * countScoreFromUnMarked winningBoard)
-        [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
-
-runGameLoser :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
-runGameLoser _ _ [] = Nothing
-runGameLoser boards lastMarkedBoards (curDraw : rest) =
-  let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
-      currentLosers = filter (\markedBoard -> not (checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard))) currentMarkedBoards
-   in if (length currentLosers) == 1
-        then runGame (map convertBackToBoard currentLosers) currentLosers rest
-        else runGameLoser boards (map (drawNumber curDraw) currentMarkedBoards) rest
-
-debugGame :: [MarkedGameBoard]
-debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardB) testDraws
-
-day4Draws :: IO [Integer]
-day4Draws = do
-  draws <- readFile "day4Draws.txt"
-  return (map (\x -> read x :: Integer) (splitOn "," draws))
-
-day4Boards :: IO [GameBoard]
-day4Boards = do
-  boards <- readFile "day4Boards.txt"
-  let chunks = chunksOf 5 (filter (/= "") (lines boards))
-      chunks' = map (\chunk -> (map (\line -> words line) chunk)) chunks
-      chunks'' = map (\chunk -> (map (map (\x -> read x :: Integer)) chunk)) chunks'
-   in return (chunks'')
-
-main' :: Maybe Integer
-main' = runGame testGame (map prepareScorePerBoard testGame) testDraws
-
-mainLoser' :: Maybe Integer
-mainLoser' = runGameLoser testGame (map prepareScorePerBoard testGame) testDraws
-
-main :: IO ()
-main = do
-  boards <- day4Boards
-  draws <- day4Draws
-  print (runGame boards (map prepareScorePerBoard boards) draws)
-  print (runGameLoser boards (map prepareScorePerBoard boards) draws)
