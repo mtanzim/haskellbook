@@ -42,6 +42,9 @@ testGame = [testBoardA, testBoardB, testBoardC]
 prepareScorePerBoard :: GameBoard -> MarkedGameBoard
 prepareScorePerBoard = map (map (\element -> (element, False)))
 
+convertBackToBoard :: MarkedGameBoard -> GameBoard
+convertBackToBoard = map (map (fst))
+
 drawNumber :: Integer -> MarkedGameBoard -> MarkedGameBoard
 drawNumber number = map (map (\(element, current) -> (element, current || (number == element))))
 
@@ -73,16 +76,14 @@ runGame boards lastMarkedBoards (curDraw : rest) =
         winningBoard : _ -> Just (curDraw * countScoreFromUnMarked winningBoard)
         [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
 
--- runGameLoser :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
--- runGameLoser _ _ [] = Nothing
--- runGame boards lastMarkedBoards (curDraw : rest) =
---   let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
---       currentLosers = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) currentMarkedBoards
---       winningGame = head currentWinners
---    in case currentWinners of
---         [winningBoard : _] -> Just (curDraw * countScoreFromUnMarked winningGame)
---         [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
---         _ -> Nothing
+runGameLoser :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
+runGameLoser _ _ [] = Nothing
+runGameLoser boards lastMarkedBoards (curDraw : rest) =
+  let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
+      currentLosers = filter (\markedBoard -> not (checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard))) currentMarkedBoards
+   in if (length currentLosers) == 1
+        then runGame (map convertBackToBoard currentLosers) currentLosers rest
+        else runGameLoser boards (map (drawNumber curDraw) currentMarkedBoards) rest
 
 debugGame :: [MarkedGameBoard]
 debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardB) testDraws
@@ -103,8 +104,12 @@ day4Boards = do
 main' :: Maybe Integer
 main' = runGame testGame (map prepareScorePerBoard testGame) testDraws
 
+mainLoser' :: Maybe Integer
+mainLoser' = runGameLoser testGame (map prepareScorePerBoard testGame) testDraws
+
 main :: IO ()
 main = do
   boards <- day4Boards
   draws <- day4Draws
   print (runGame boards (map prepareScorePerBoard boards) draws)
+  print (runGameLoser boards (map prepareScorePerBoard boards) draws)
