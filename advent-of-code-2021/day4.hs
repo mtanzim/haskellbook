@@ -6,7 +6,11 @@ testDraws = [7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12
 -- testDraws :: [Integer]
 -- testDraws = [22, 13, 17, 11, 0, 44]
 
-testBoardA :: [[Integer]]
+type GameBoard = [[Integer]]
+
+type MarkedGameBoard = [[(Integer, Bool)]]
+
+testBoardA :: GameBoard
 testBoardA =
   [ [22, 13, 17, 11, 0],
     [8, 2, 23, 4, 24],
@@ -15,23 +19,23 @@ testBoardA =
     [1, 12, 20, 15, 19]
   ]
 
-testGame :: [[[Integer]]]
+testGame :: [GameBoard]
 testGame = [testBoardA]
 
-prepareScorePerBoard :: [[Integer]] -> [[(Integer, Bool)]]
+prepareScorePerBoard :: GameBoard -> MarkedGameBoard
 prepareScorePerBoard = map (map (\element -> (element, False)))
 
-drawNumber :: Integer -> [[(Integer, Bool)]] -> [[(Integer, Bool)]]
+drawNumber :: Integer -> MarkedGameBoard -> MarkedGameBoard
 drawNumber number = map (map (\(element, current) -> (element, current || (number == element))))
 
-checkRowsForWin :: [[(Integer, Bool)]] -> Bool
+checkRowsForWin :: MarkedGameBoard -> Bool
 checkRowsForWin = any (all (\(_, isPicked) -> isPicked))
 
-runGamePerBoard :: [[(Integer, Bool)]] -> [Integer] -> (Bool, Integer, [[(Integer, Bool)]])
+runGamePerBoard :: MarkedGameBoard -> [Integer] -> (Bool, Integer, MarkedGameBoard)
 runGamePerBoard scoreboard [] = (False, -1, scoreboard)
 runGamePerBoard scoreboard (curDraw : rest) =
   let latestScoreboard = drawNumber curDraw scoreboard
    in if checkRowsForWin latestScoreboard then (True, curDraw, latestScoreboard) else runGamePerBoard (drawNumber curDraw scoreboard) rest
 
-debugGame :: [[[(Integer, Bool)]]]
+debugGame :: [MarkedGameBoard]
 debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardA) testDraws
