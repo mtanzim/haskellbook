@@ -69,11 +69,20 @@ runGame _ _ [] = Nothing
 runGame boards lastMarkedBoards (curDraw : rest) =
   let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
       currentWinners = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) currentMarkedBoards
-      winningGame = head currentWinners
    in case currentWinners of
-        [winningBoard : _] -> Just (curDraw * countScoreFromUnMarked winningGame)
+        winningBoard : _ -> Just (curDraw * countScoreFromUnMarked winningBoard)
         [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
-        _ -> Nothing
+
+-- runGameLoser :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
+-- runGameLoser _ _ [] = Nothing
+-- runGame boards lastMarkedBoards (curDraw : rest) =
+--   let currentMarkedBoards = (map (drawNumber curDraw) lastMarkedBoards)
+--       currentLosers = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) currentMarkedBoards
+--       winningGame = head currentWinners
+--    in case currentWinners of
+--         [winningBoard : _] -> Just (curDraw * countScoreFromUnMarked winningGame)
+--         [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
+--         _ -> Nothing
 
 debugGame :: [MarkedGameBoard]
 debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardB) testDraws
