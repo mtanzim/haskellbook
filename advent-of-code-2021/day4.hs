@@ -59,10 +59,12 @@ countScoreFromUnMarked = sum . map fst . filter (not . snd) . concat
 runGame :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
 runGame _ _ [] = Nothing
 runGame boards latestMarkedBoards (curDraw : rest) =
-  let currentWinners = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) latestMarkedBoards
+  let currentMarkedBoards = (map (drawNumber curDraw) latestMarkedBoards)
+      currentWinners = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) currentMarkedBoards
+      winningGame = head currentWinners
    in if length currentWinners > 0
-        then Just (curDraw * countScoreFromUnMarked (head currentWinners))
-        else runGame boards (map (drawNumber curDraw) latestMarkedBoards) rest
+        then Just (curDraw * countScoreFromUnMarked winningGame)
+        else runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
 
 main :: Maybe Integer
 main = runGame testGame (map prepareScorePerBoard testGame) testDraws
