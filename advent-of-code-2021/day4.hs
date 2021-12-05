@@ -75,9 +75,6 @@ runGame boards lastMarkedBoards (curDraw : rest) =
         [] -> runGame boards (map (drawNumber curDraw) currentMarkedBoards) rest
         _ -> Nothing
 
-main :: Maybe Integer
-main = runGame testGame (map prepareScorePerBoard testGame) testDraws
-
 debugGame :: [MarkedGameBoard]
 debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardB) testDraws
 
@@ -86,10 +83,19 @@ day4Draws = do
   draws <- readFile "day4Draws.txt"
   return (map (\x -> read x :: Integer) (splitOn "," draws))
 
-day4Boards :: IO [[[Integer]]]
+day4Boards :: IO [GameBoard]
 day4Boards = do
   boards <- readFile "day4Boards.txt"
   let chunks = chunksOf 5 (filter (/= "") (lines boards))
       chunks' = map (\chunk -> (map (\line -> words line) chunk)) chunks
       chunks'' = map (\chunk -> (map (map (\x -> read x :: Integer)) chunk)) chunks'
    in return (chunks'')
+
+main' :: Maybe Integer
+main' = runGame testGame (map prepareScorePerBoard testGame) testDraws
+
+main :: IO ()
+main = do
+  boards <- day4Boards
+  draws <- day4Draws
+  print (runGame boards (map prepareScorePerBoard boards) draws)
