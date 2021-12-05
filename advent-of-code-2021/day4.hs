@@ -31,6 +31,11 @@ drawNumber number = map (map (\(element, current) -> (element, current || (numbe
 checkRowsForWin :: MarkedGameBoard -> Bool
 checkRowsForWin = any (all (\(_, isPicked) -> isPicked))
 
+transposeBoard :: MarkedGameBoard -> MarkedGameBoard
+transposeBoard scoreboard =
+  let boardLength = length (head scoreboard) - 1
+   in map (\curIdx -> map (\row -> row !! curIdx) scoreboard) [0 .. boardLength]
+
 runGamePerBoard :: MarkedGameBoard -> [Integer] -> (Bool, Integer, MarkedGameBoard)
 runGamePerBoard scoreboard [] = (False, -1, scoreboard)
 runGamePerBoard scoreboard (curDraw : rest) =
