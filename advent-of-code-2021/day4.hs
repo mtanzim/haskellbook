@@ -10,8 +10,17 @@ type GameBoard = [[Integer]]
 
 type MarkedGameBoard = [[(Integer, Bool)]]
 
-testBoardA :: GameBoard
-testBoardA =
+testBoardB :: GameBoard
+testBoardB =
+  [ [3, 15, 0, 2, 22],
+    [9, 18, 13, 17, 5],
+    [19, 8, 7, 25, 23],
+    [20, 11, 10, 24, 4],
+    [14, 21, 16, 12, 6]
+  ]
+
+testBoardC :: GameBoard
+testBoardC =
   [ [14, 21, 17, 24, 4],
     [10, 16, 15, 9, 19],
     [18, 8, 23, 26, 20],
@@ -20,7 +29,7 @@ testBoardA =
   ]
 
 testGame :: [GameBoard]
-testGame = [testBoardA]
+testGame = [testBoardB, testBoardC]
 
 prepareScorePerBoard :: GameBoard -> MarkedGameBoard
 prepareScorePerBoard = map (map (\element -> (element, False)))
@@ -47,5 +56,16 @@ runGamePerBoard markedBoard (curDraw : rest) =
 countScoreFromUnMarked :: MarkedGameBoard -> Integer
 countScoreFromUnMarked = sum . map fst . filter (not . snd) . concat
 
+runGame :: [GameBoard] -> [MarkedGameBoard] -> [Integer] -> Maybe Integer
+runGame _ _ [] = Nothing
+runGame boards latestMarkedBoards (curDraw : rest) =
+  let currentWinners = filter (\markedBoard -> checkRowsForWin markedBoard || checkRowsForWin (transposeBoard markedBoard)) latestMarkedBoards
+   in if length currentWinners > 0
+        then Just (curDraw * countScoreFromUnMarked (head currentWinners))
+        else runGame boards (map (drawNumber curDraw) latestMarkedBoards) rest
+
+main :: Maybe Integer
+main = runGame testGame (map prepareScorePerBoard testGame) testDraws
+
 debugGame :: [MarkedGameBoard]
-debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardA) testDraws
+debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardB) testDraws
