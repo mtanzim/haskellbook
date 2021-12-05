@@ -34,13 +34,18 @@ checkRowsForWin = any (all (\(_, isPicked) -> isPicked))
 transposeBoard :: MarkedGameBoard -> MarkedGameBoard
 transposeBoard scoreboard =
   let boardLength = length (head scoreboard) - 1
-   in map (\curIdx -> map (\row -> row !! curIdx) scoreboard) [0 .. boardLength]
+   in map (\curIdx -> map (!! curIdx) scoreboard) [0 .. boardLength]
 
-runGamePerBoard :: MarkedGameBoard -> [Integer] -> (Bool, Integer, MarkedGameBoard)
-runGamePerBoard scoreboard [] = (False, -1, scoreboard)
-runGamePerBoard scoreboard (curDraw : rest) =
-  let latestScoreboard = drawNumber curDraw scoreboard
-   in if checkRowsForWin latestScoreboard then (True, curDraw, latestScoreboard) else runGamePerBoard (drawNumber curDraw scoreboard) rest
+runGamePerBoard :: MarkedGameBoard -> [Integer] -> Integer
+runGamePerBoard markedBoard [] = -1
+runGamePerBoard markedBoard (curDraw : rest) =
+  let latestMarkedBoard = drawNumber curDraw markedBoard
+   in if checkRowsForWin latestMarkedBoard || checkRowsForWin (transposeBoard latestMarkedBoard)
+        then curDraw * countScoreFromUnMarked latestMarkedBoard
+        else runGamePerBoard (drawNumber curDraw markedBoard) rest
+
+countScoreFromUnMarked :: MarkedGameBoard -> Integer
+countScoreFromUnMarked = sum . map fst . filter snd . concat
 
 debugGame :: [MarkedGameBoard]
 debugGame = scanr (\curDraw acc -> (drawNumber curDraw acc)) (prepareScorePerBoard testBoardA) testDraws
