@@ -7,10 +7,18 @@ type Coordinate = (Integer, Integer)
 
 type LineDefinition = (Coordinate, Coordinate)
 
+isLineStraight :: LineDefinition -> Bool
+isLineStraight ((x1, y1), (x2, y2)) = x1 == x2 || y1 == y2
+
 filterStraightLines :: [LineDefinition] -> [LineDefinition]
-filterStraightLines = filter fn
-  where
-    fn ((x1, y1), (x2, y2)) = x1 == x2 || y1 == y2
+filterStraightLines = filter isLineStraight
+
+filterDiagonalLines :: [LineDefinition] -> [LineDefinition]
+filterDiagonalLines = filter (not . isLineStraight)
+
+-- filterStraightLines = filter fn
+--   where
+--     fn ((x1, y1), (x2, y2)) = x1 == x2 || y1 == y2
 
 collectPointsFromStraightLines :: [LineDefinition] -> [[Coordinate]]
 collectPointsFromStraightLines = map fn
@@ -46,7 +54,9 @@ testInput :: [LineDefinition]
 testInput =
   [ ((0, 9), (5, 9)),
     ((5, 9), (5, 8)),
-    ((0, 9), (0, 5))
+    ((0, 9), (0, 5)),
+    ((1, 1), (3, 3)),
+    ((9, 7), (7, 9))
   ]
 
 testMain :: Int
