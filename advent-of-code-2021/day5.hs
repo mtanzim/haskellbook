@@ -6,13 +6,6 @@ type Coordinate = (Integer, Integer)
 
 type LineDefinition = (Coordinate, Coordinate)
 
-testInput :: [LineDefinition]
-testInput =
-  [ ((0, 9), (5, 9)),
-    ((8, 0), (0, 8)),
-    ((7, 0), (7, 4))
-  ]
-
 filterStraightLines :: [LineDefinition] -> [LineDefinition]
 filterStraightLines = filter fn
   where
@@ -30,11 +23,30 @@ collectPointsFromStraightLines = map fn
           yRange = [minY .. maxY]
        in [(x', y') | x' <- xRange, y' <- yRange]
 
-buildOccurences :: Map.Map Coordinate Integer -> [Coordinate] -> Map.Map Coordinate Integer
-buildOccurences currentMap (head : tail) =
-  let currentValue = (Map.findWithDefault (-1) head currentMap) + 1
-   in buildOccurences (Map.insert head currentValue currentMap) tail
-buildOccurences currentMap [] = currentMap
+buildCoordinateMap :: Map.Map Coordinate Integer -> [Coordinate] -> Map.Map Coordinate Integer
+buildCoordinateMap currentMap (head : tail) =
+  let currentValue = (Map.findWithDefault 0 head currentMap) + 1
+   in buildCoordinateMap (Map.insert head currentValue currentMap) tail
+buildCoordinateMap currentMap [] = currentMap
 
-testMain :: Map.Map Coordinate Integer
-testMain = ((buildOccurences Map.empty) . concat . collectPointsFromStraightLines . filterStraightLines) testInput
+filterIntersectingPoints :: Map.Map Coordinate Integer -> Map.Map Coordinate Integer
+filterIntersectingPoints = Map.filter (> 1)
+
+numOverlappingStraightLines :: [LineDefinition] -> Int
+numOverlappingStraightLines =
+  Map.size
+    . filterIntersectingPoints
+    . buildCoordinateMap Map.empty
+    . concat
+    . collectPointsFromStraightLines
+    . filterStraightLines
+
+testInput :: [LineDefinition]
+testInput =
+  [ ((0, 9), (5, 9)),
+    ((8, 0), (0, 8)),
+    ((0, 9), (7, 9))
+  ]
+
+testMain :: Int
+testMain = numOverlappingStraightLines testInput
