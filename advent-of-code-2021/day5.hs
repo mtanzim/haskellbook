@@ -1,5 +1,6 @@
 module Day5 where
 
+import Data.List.Split
 import qualified Data.Map as Map
 
 type Coordinate = (Integer, Integer)
@@ -50,3 +51,19 @@ testInput =
 
 testMain :: Int
 testMain = numOverlappingPointsFromStraightLines testInput
+
+day5Input :: IO [LineDefinition]
+day5Input = do
+  inputs <- readFile "day5Input.txt"
+
+  let inputs' = ((map (splitOn " -> ")) . lines) inputs
+      coords = map (map (splitOn ",")) inputs'
+      coords' = map (map (map (\x -> read x :: Integer))) coords
+      coords'' = map (map (\lines -> (lines !! 0, lines !! 1))) coords'
+      coords''' = map (\line -> (line !! 0, line !! 1)) coords''
+   in return (coords''')
+
+main :: IO ()
+main = do
+  input <- day5Input
+  print (numOverlappingPointsFromStraightLines input)
