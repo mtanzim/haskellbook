@@ -1,5 +1,7 @@
 module Day5 where
 
+import qualified Data.Map as Map
+
 type Coordinate = (Integer, Integer)
 
 type LineDefinition = (Coordinate, Coordinate)
@@ -28,5 +30,11 @@ collectPointsFromStraightLines = map fn
           yRange = [minY .. maxY]
        in [(x', y') | x' <- xRange, y' <- yRange]
 
-testMain :: [Coordinate]
-testMain = (concat . collectPointsFromStraightLines . filterStraightLines) testInput
+buildOccurences :: Map.Map Coordinate Integer -> [Coordinate] -> Map.Map Coordinate Integer
+buildOccurences currentMap (head : tail) =
+  let currentValue = (Map.findWithDefault (-1) head currentMap) + 1
+   in buildOccurences (Map.insert head currentValue currentMap) tail
+buildOccurences currentMap [] = currentMap
+
+testMain :: Map.Map Coordinate Integer
+testMain = ((buildOccurences Map.empty) . concat . collectPointsFromStraightLines . filterStraightLines) testInput
