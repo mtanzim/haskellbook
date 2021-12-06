@@ -32,6 +32,18 @@ collectPointsFromStraightLines = map fn
           yRange = [minY .. maxY]
        in [(x', y') | x' <- xRange, y' <- yRange]
 
+collectPointsFromDiagonalLines :: [LineDefinition] -> [[Coordinate]]
+collectPointsFromDiagonalLines = map fn
+  where
+    fn ((x1, y1), (x2, y2)) =
+      let maxX = max x1 x2
+          minX = min x1 x2
+          maxY = max y1 y2
+          minY = min y1 y2
+          xRange = [minX .. maxX]
+          yRange = [minY .. maxY]
+       in [(x', y') | x' <- xRange, y' <- yRange, x' > minX && x' < maxX, y' > minY && y' < maxY] ++ [(x1, y1), (x2, y2)]
+
 buildCoordinateMap :: Map.Map Coordinate Integer -> [Coordinate] -> Map.Map Coordinate Integer
 buildCoordinateMap currentMap (head : tail) =
   let currentValue = (Map.findWithDefault 0 head currentMap) + 1
