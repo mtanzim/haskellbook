@@ -32,8 +32,8 @@ buildCoordinateMap currentMap [] = currentMap
 filterIntersectingPoints :: Map.Map Coordinate Integer -> Map.Map Coordinate Integer
 filterIntersectingPoints = Map.filter (> 1)
 
-numOverlappingStraightLines :: [LineDefinition] -> Int
-numOverlappingStraightLines =
+numOverlappingPointsFromStraightLines :: [LineDefinition] -> Int
+numOverlappingPointsFromStraightLines =
   Map.size
     . filterIntersectingPoints
     . buildCoordinateMap Map.empty
@@ -44,9 +44,9 @@ numOverlappingStraightLines =
 testInput :: [LineDefinition]
 testInput =
   [ ((0, 9), (5, 9)),
-    ((8, 0), (0, 8)),
-    ((0, 9), (7, 9))
+    ((5, 9), (5, 8)),
+    ((0, 9), (0, 5))
   ]
 
 testMain :: Int
-testMain = numOverlappingStraightLines testInput
+testMain = numOverlappingPointsFromStraightLines testInput
