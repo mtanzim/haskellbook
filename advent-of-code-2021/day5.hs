@@ -16,10 +16,6 @@ filterStraightLines = filter isLineStraight
 filterDiagonalLines :: [LineDefinition] -> [LineDefinition]
 filterDiagonalLines = filter (not . isLineStraight)
 
--- filterStraightLines = filter fn
---   where
---     fn ((x1, y1), (x2, y2)) = x1 == x2 || y1 == y2
-
 collectPointsFromStraightLines :: [LineDefinition] -> [[Coordinate]]
 collectPointsFromStraightLines = map fn
   where
@@ -41,8 +37,8 @@ collectPointsFromDiagonalLines = map fn
           maxY = max y1 y2
           minY = min y1 y2
           xRange = [minX .. maxX]
-          yRange = [minY .. maxY]
-       in [(x', y') | x' <- xRange, y' <- yRange, x' > minX && x' < maxX, y' > minY && y' < maxY] ++ [(x1, y1), (x2, y2)]
+          yRange = reverse [minY .. maxY]
+       in zip xRange yRange
 
 buildCoordinateMap :: Map.Map Coordinate Integer -> [Coordinate] -> Map.Map Coordinate Integer
 buildCoordinateMap currentMap (head : tail) =
@@ -53,6 +49,8 @@ buildCoordinateMap currentMap [] = currentMap
 filterIntersectingPoints :: Map.Map Coordinate Integer -> Map.Map Coordinate Integer
 filterIntersectingPoints = Map.filter (> 1)
 
+collectPointsFromAllLines input = (concat (collectPointsFromDiagonalLines (filterDiagonalLines input))) ++ (concat (collectPointsFromStraightLines (filterStraightLines input)))
+
 numOverlappingPointsFromStraightLines :: [LineDefinition] -> Int
 numOverlappingPointsFromStraightLines =
   Map.size
@@ -61,6 +59,13 @@ numOverlappingPointsFromStraightLines =
     . concat
     . collectPointsFromStraightLines
     . filterStraightLines
+
+numOverlappingPointsFromAllLines :: [LineDefinition] -> Int
+numOverlappingPointsFromAllLines =
+  Map.size
+    . filterIntersectingPoints
+    . buildCoordinateMap Map.empty
+    . collectPointsFromAllLines
 
 testInput :: [LineDefinition]
 testInput =
@@ -89,3 +94,7 @@ main :: IO ()
 main = do
   input <- day5Input
   print (numOverlappingPointsFromStraightLines input)
+  print (numOverlappingPointsFromAllLines input)
+
+  -- print (collectPointsFromAllLines input)
+  -- print (filterDiagonalLines input)
