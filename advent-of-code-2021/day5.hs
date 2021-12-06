@@ -56,12 +56,12 @@ day5Input :: IO [LineDefinition]
 day5Input = do
   inputs <- readFile "day5Input.txt"
 
-  let parserA = ((map (splitOn " -> ")) . lines)
-      parserB = map (map (splitOn ","))
-      parserC = map (map (map (\x -> read x :: Integer)))
-      parserD = map (map (\lines -> (lines !! 0, lines !! 1)))
-      parserE = map (\line -> (line !! 0, line !! 1))
-   in return ((parserE . parserD . parserC . parserB . parserA) inputs)
+  let parseLines = ((map (splitOn " -> ")) . lines)
+      parsePoints = map (map (splitOn ","))
+      convertPointToInteger = map (map (map (\x -> read x :: Integer)))
+      arrToTupleOuter = map (map (\lines -> (lines !! 0, lines !! 1)))
+      arrToTupleInner = map (\line -> (line !! 0, line !! 1))
+   in return ((arrToTupleInner . arrToTupleOuter . convertPointToInteger . parsePoints . parseLines) inputs)
 
 main :: IO ()
 main = do
