@@ -32,12 +32,8 @@ collectPointsFromDiagonalLines :: [LineDefinition] -> [[Coordinate]]
 collectPointsFromDiagonalLines = map fn
   where
     fn ((x1, y1), (x2, y2)) =
-      let maxX = max x1 x2
-          minX = min x1 x2
-          maxY = max y1 y2
-          minY = min y1 y2
-          xRange = [minX .. maxX]
-          yRange = reverse [minY .. maxY]
+      let xRange = if x1 < x2 then [x1 .. x2] else reverse [x2 .. x1]
+          yRange = if y1 < y2 then [y1 .. y2] else reverse [y2 .. y1]
        in zip xRange yRange
 
 buildCoordinateMap :: Map.Map Coordinate Integer -> [Coordinate] -> Map.Map Coordinate Integer
@@ -95,6 +91,3 @@ main = do
   input <- day5Input
   print (numOverlappingPointsFromStraightLines input)
   print (numOverlappingPointsFromAllLines input)
-
-  -- print (collectPointsFromAllLines input)
-  -- print (filterDiagonalLines input)
