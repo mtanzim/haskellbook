@@ -7,6 +7,25 @@ type Coordinate = (Integer, Integer)
 
 type LineDefinition = (Coordinate, Coordinate)
 
+main :: IO ()
+main = do
+  input <- day5Input
+  -- Part a
+  print (numOverlappingPointsFromStraightLines input)
+  -- Part b
+  print (numOverlappingPointsFromAllLines input)
+
+day5Input :: IO [LineDefinition]
+day5Input = do
+  inputs <- readFile "day5Input.txt"
+
+  let parseLines = ((map (splitOn " -> ")) . lines)
+      parsePoints = map (map (splitOn ","))
+      convertPointToInteger = map (map (map (\x -> read x :: Integer)))
+      arrToTupleOuter = map (map (\lines -> (lines !! 0, lines !! 1)))
+      arrToTupleInner = map (\line -> (line !! 0, line !! 1))
+   in return ((arrToTupleInner . arrToTupleOuter . convertPointToInteger . parsePoints . parseLines) inputs)
+
 isLineStraight :: LineDefinition -> Bool
 isLineStraight ((x1, y1), (x2, y2)) = x1 == x2 || y1 == y2
 
@@ -45,7 +64,10 @@ buildCoordinateMap currentMap [] = currentMap
 filterIntersectingPoints :: Map.Map Coordinate Integer -> Map.Map Coordinate Integer
 filterIntersectingPoints = Map.filter (> 1)
 
-collectPointsFromAllLines input = (concat (collectPointsFromDiagonalLines (filterDiagonalLines input))) ++ (concat (collectPointsFromStraightLines (filterStraightLines input)))
+filterAndCollectPointsFromAllLines :: [LineDefinition] -> [Coordinate]
+filterAndCollectPointsFromAllLines input =
+  concat (collectPointsFromDiagonalLines (filterDiagonalLines input))
+    ++ concat (collectPointsFromStraightLines (filterStraightLines input))
 
 numOverlappingPointsFromStraightLines :: [LineDefinition] -> Int
 numOverlappingPointsFromStraightLines =
@@ -61,8 +83,9 @@ numOverlappingPointsFromAllLines =
   Map.size
     . filterIntersectingPoints
     . buildCoordinateMap Map.empty
-    . collectPointsFromAllLines
+    . filterAndCollectPointsFromAllLines
 
+-- debug
 testInput :: [LineDefinition]
 testInput =
   [ ((0, 9), (5, 9)),
@@ -74,20 +97,3 @@ testInput =
 
 testMain :: Int
 testMain = numOverlappingPointsFromStraightLines testInput
-
-day5Input :: IO [LineDefinition]
-day5Input = do
-  inputs <- readFile "day5Input.txt"
-
-  let parseLines = ((map (splitOn " -> ")) . lines)
-      parsePoints = map (map (splitOn ","))
-      convertPointToInteger = map (map (map (\x -> read x :: Integer)))
-      arrToTupleOuter = map (map (\lines -> (lines !! 0, lines !! 1)))
-      arrToTupleInner = map (\line -> (line !! 0, line !! 1))
-   in return ((arrToTupleInner . arrToTupleOuter . convertPointToInteger . parsePoints . parseLines) inputs)
-
-main :: IO ()
-main = do
-  input <- day5Input
-  print (numOverlappingPointsFromStraightLines input)
-  print (numOverlappingPointsFromAllLines input)
