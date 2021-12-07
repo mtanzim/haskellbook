@@ -24,9 +24,10 @@ identityGen = do
 
 main :: IO ()
 main = do
-  quickCheck (f :: Identity Int -> Bool)
+  quickCheck f
   quickCheck li
   where
+    f :: Identity Int -> Bool
     f x = functorIdentity x
     c = functorCompose (+ 1) (* 2)
     li x = c (x :: Identity Int)
