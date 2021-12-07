@@ -16,7 +16,7 @@ main = do
       maxPossibleConst = sum range
       maxPossibleWithAccel = sumWithAcceleration range
    in do
-        -- TODO: fix slow algos!! part b is O(n^3)!!
+        -- TODO: can be better than O(n^2)? Memoization for improvements?
         print (getMinDisplacement sortedInput range 0 (0, maxPossibleConst) sum)
         print (getMinDisplacement sortedInput range 0 (0, maxPossibleWithAccel) sumWithAcceleration)
 
