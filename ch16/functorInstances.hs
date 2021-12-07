@@ -25,5 +25,8 @@ identityGen = do
 main :: IO ()
 main = do
   quickCheck (f :: Identity Int -> Bool)
+  quickCheck li
   where
     f x = functorIdentity x
+    c = functorCompose (+ 1) (* 2)
+    li x = c (x :: Identity Int)
