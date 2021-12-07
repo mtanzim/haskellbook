@@ -17,14 +17,14 @@ main = do
       maxPossibleWithAccel = sumWithAcceleration range
    in do
         -- TODO: fix slow algos!! part b is O(n^3)!!
-        print (gatherRelativeDistances sortedInput range 0 (0, maxPossibleConst) sum)
-        print (gatherRelativeDistances sortedInput range 0 (0, maxPossibleWithAccel) sumWithAcceleration)
+        print (getMinDisplacement sortedInput range 0 (0, maxPossibleConst) sum)
+        print (getMinDisplacement sortedInput range 0 (0, maxPossibleWithAccel) sumWithAcceleration)
 
 sumWithAcceleration :: [Integer] -> Integer
 sumWithAcceleration = sum . map (\x -> sum [0 .. x])
 
-gatherRelativeDistances :: [Integer] -> [Integer] -> Int -> (Integer, Integer) -> ([Integer] -> Integer) -> (Integer, Integer)
-gatherRelativeDistances lst range curIdx (minPos, minTotalDistance) summingFn =
+getMinDisplacement :: [Integer] -> [Integer] -> Int -> (Integer, Integer) -> ([Integer] -> Integer) -> (Integer, Integer)
+getMinDisplacement lst range curIdx (minPos, minTotalDistance) summingFn =
   if curIdx == length range - 1
     then (minPos, minTotalDistance)
     else
@@ -33,7 +33,7 @@ gatherRelativeDistances lst range curIdx (minPos, minTotalDistance) summingFn =
           totalDisplacement = summingFn relativeDistances
           latestMinDistance = min totalDisplacement minTotalDistance
           latestMinPos = if latestMinDistance < minTotalDistance then curVal else minPos
-       in gatherRelativeDistances lst range (curIdx + 1) (latestMinPos, latestMinDistance) summingFn
+       in getMinDisplacement lst range (curIdx + 1) (latestMinPos, latestMinDistance) summingFn
 
 -- DEBUG
 
@@ -44,4 +44,4 @@ testMain :: (Integer, Integer)
 testMain =
   let sortedInput = sort testInput
       range = [head sortedInput .. last sortedInput]
-   in gatherRelativeDistances sortedInput range 0 (0, sumWithAcceleration range) sumWithAcceleration
+   in getMinDisplacement sortedInput range 0 (0, sumWithAcceleration range) sumWithAcceleration
