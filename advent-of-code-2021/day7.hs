@@ -20,8 +20,9 @@ main = do
         print (getMinDisplacement sortedInput range 0 (0, maxPossibleConst) sum)
         print (getMinDisplacement sortedInput range 0 (0, maxPossibleWithAccel) sumWithAcceleration)
 
+-- https://en.wikipedia.org/wiki/Triangular_number
 sumWithAcceleration :: [Integer] -> Integer
-sumWithAcceleration = sum . map (\x -> sum [0 .. x])
+sumWithAcceleration = sum . map (\x -> (x * (x + 1)) `div` 2)
 
 getMinDisplacement :: [Integer] -> [Integer] -> Int -> (Integer, Integer) -> ([Integer] -> Integer) -> (Integer, Integer)
 getMinDisplacement lst range curIdx (minPos, minTotalDistance) summingFn =
