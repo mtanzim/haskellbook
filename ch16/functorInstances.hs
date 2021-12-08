@@ -79,6 +79,11 @@ threeGen' = do
 instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b) where
   arbitrary = threeGen'
 
+data Four a b c d = Four a b c d deriving (Eq, Show)
+
+instance Functor (Four a b c) where
+  fmap f (Four a b c d) = Four a b c (f d)
+
 main :: IO ()
 main = do
   quickCheck f
@@ -102,6 +107,8 @@ main = do
     fThree x = functorIdentity x
     fThree' :: Three' Int Char -> Bool
     fThree' x = functorIdentity x
+    fFour :: Four Int Char Char Double -> Bool
+    fFour x = functorIdentity x
     c = functorCompose (+ 1) (* 2)
     li x = c (x :: Identity Int)
     cPair = functorCompose (+ 1) (* 2)
@@ -112,3 +119,5 @@ main = do
     liThree x = cThree (x :: Three Int String Int)
     cThree' = functorCompose (const Three' 44 "s" "g") (const "s")
     liThree' x = cThree' (x :: Three' Int String)
+    cFour = functorCompose (* 3) (+ 1)
+    liFour x = cFour (x :: Four String Char Double Int)
