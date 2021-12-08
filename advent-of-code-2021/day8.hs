@@ -1,5 +1,6 @@
 module Day8 where
 
+import Data.List
 import Data.List.Split
 import qualified Data.Map as Map
 
@@ -39,11 +40,19 @@ makeCharMappingOfSegments :: [Char] -> [Char] -> Map.Map Char Char
 makeCharMappingOfSegments rightSegment wrongSegment =
   Map.fromList (map (\i -> (rightSegment !! i, wrongSegment !! i)) [0 .. (length rightSegment - 1)])
 
-makeIncorrectMapOfDigis :: Map.Map Char Char -> Map.Map [Char] Char
-makeIncorrectMapOfDigis charLookup =
+makeIncorrectMapOfDigits :: Map.Map Char Char -> Map.Map [Char] Char
+makeIncorrectMapOfDigits charLookup =
   Map.mapKeys fn mapOfDigits
   where
     fn segmentChars = map (\segment -> charLookup Map.! segment) segmentChars
+
+testMainPartB =
+  let fullSegment = head (filter (\w -> length w == 7) (words (head (onlyDigitInputs testInput))))
+      charLookup = makeCharMappingOfSegments "abcdefg" fullSegment
+      curMapOfDigits = makeIncorrectMapOfDigits charLookup
+      digitOutput = map (sort) (words (head (onlyDigitOutputs testInput)))
+      segmentToDigit = map (\segment -> curMapOfDigits Map.! segment) digitOutput
+   in curMapOfDigits
 
 mapOfDigits :: Map.Map [Char] Char
 mapOfDigits =
