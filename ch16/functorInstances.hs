@@ -65,6 +65,20 @@ threeGen = do
 instance (Arbitrary a, Arbitrary b, Arbitrary c) => Arbitrary (Three a b c) where
   arbitrary = threeGen
 
+data Three' a b = Three' a b b deriving (Eq, Show)
+
+instance Functor (Three' a) where
+  fmap f (Three' a b b') = Three' a (f b) (f b')
+
+threeGen' :: (Arbitrary a, Arbitrary b) => Gen (Three' a b)
+threeGen' = do
+  a <- arbitrary
+  b <- arbitrary
+  return (Three' a b b)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b) where
+  arbitrary = threeGen'
+
 main :: IO ()
 main = do
   quickCheck f
@@ -74,6 +88,9 @@ main = do
   quickCheck fTwo
   quickCheck liTwo
   quickCheck fThree
+  quickCheck liThree
+  quickCheck fThree'
+  quickCheck liThree'
   where
     f :: Identity Int -> Bool
     f x = functorIdentity x
@@ -83,9 +100,15 @@ main = do
     fTwo x = functorIdentity x
     fThree :: Three Int Char String -> Bool
     fThree x = functorIdentity x
+    fThree' :: Three' Int Char -> Bool
+    fThree' x = functorIdentity x
     c = functorCompose (+ 1) (* 2)
     li x = c (x :: Identity Int)
     cPair = functorCompose (+ 1) (* 2)
     liPair x = cPair (x :: Pair Int)
     cTwo = functorCompose (const Two 44 "s") (const "s")
     liTwo x = cTwo (x :: Two Int String)
+    cThree = functorCompose (const Three 44 "s" 'g') (const "s")
+    liThree x = cThree (x :: Three Int String Int)
+    cThree' = functorCompose (const Three' 44 "s" "g") (const "s")
+    liThree' x = cThree' (x :: Three' Int String)
