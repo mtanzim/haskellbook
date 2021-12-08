@@ -14,6 +14,9 @@ main = do
   print (fishSimulatorFaster input 80)
   print (fishSimulatorFaster input 256)
 
+fishSimulatorFaster :: [Integer] -> Integer -> Integer
+fishSimulatorFaster initState days = countFishesFromMap (foldr (\day acc -> elapseFaster acc) (buildStatusMap initState) [1 .. days])
+
 buildStatusMap :: [Integer] -> Map.Map Integer Integer
 buildStatusMap = foldr (\x curMap -> Map.insert x (newValue curMap x) curMap) Map.empty
   where
@@ -34,11 +37,10 @@ elapseFaster currentFishMap =
           (8, curZeroes)
         ]
 
-fishSimulatorFaster :: [Integer] -> Integer -> Integer
-fishSimulatorFaster initState days = countFishesFromMap (foldr (\day acc -> elapseFaster acc) (buildStatusMap initState) [1 .. days])
-
 countFishesFromMap :: Map.Map Integer Integer -> Integer
 countFishesFromMap = Map.foldr (+) 0
+
+-- Debug
 
 testInput :: [Integer]
 testInput = [3, 4, 3, 1, 2]
