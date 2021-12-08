@@ -25,26 +25,18 @@ buildStatusMap = foldr (\x curMap -> Map.insert x (newValue curMap x) curMap) Ma
 elapseFaster :: Map.Map Integer Integer -> Map.Map Integer Integer
 elapseFaster currentFishMap =
   let curZeroes = Map.findWithDefault 0 0 currentFishMap
-   in Map.fromList
-        [ (0, Map.findWithDefault 0 1 currentFishMap),
-          (1, Map.findWithDefault 0 2 currentFishMap),
-          (2, Map.findWithDefault 0 3 currentFishMap),
-          (3, Map.findWithDefault 0 4 currentFishMap),
-          (4, Map.findWithDefault 0 5 currentFishMap),
-          (5, Map.findWithDefault 0 6 currentFishMap),
-          (6, Map.findWithDefault 0 7 currentFishMap + Map.findWithDefault 0 0 currentFishMap),
-          (7, Map.findWithDefault 0 8 currentFishMap),
-          (8, curZeroes)
-        ]
+      kvList =
+        map (\x -> (x, Map.findWithDefault 0 (x + 1) currentFishMap)) [0 .. 5]
+          ++ [ (6, Map.findWithDefault 0 7 currentFishMap + Map.findWithDefault 0 0 currentFishMap),
+               (7, Map.findWithDefault 0 8 currentFishMap),
+               (8, curZeroes)
+             ]
+   in Map.fromList kvList
 
 countFishesFromMap :: Map.Map Integer Integer -> Integer
 countFishesFromMap = Map.foldr (+) 0
 
--- Debug
-
-testInput :: [Integer]
-testInput = [3, 4, 3, 1, 2]
-
+-- Slow solution with lists
 elapse :: [Integer] -> [Integer]
 elapse currentFishes =
   let curZeroes = countZeroes currentFishes
@@ -56,3 +48,7 @@ countZeroes = foldr (\x acc -> if x == 0 then acc + 1 else acc) 0
 
 fishSimulator :: [Integer] -> Integer -> Int
 fishSimulator initState days = length (foldr (\day acc -> elapse acc) initState [1 .. days])
+
+-- Debug
+testInput :: [Integer]
+testInput = [3, 4, 3, 1, 2]
