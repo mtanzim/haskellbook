@@ -50,6 +50,21 @@ twoGen = do
 instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
   arbitrary = twoGen
 
+data Three a b c = Three a b c deriving (Eq, Show)
+
+instance Functor (Three a b) where
+  fmap f (Three a b c) = Three a b (f c)
+
+threeGen :: (Arbitrary a, Arbitrary b, Arbitrary c) => Gen (Three a b c)
+threeGen = do
+  a <- arbitrary
+  b <- arbitrary
+  c <- arbitrary
+  return (Three a b c)
+
+instance (Arbitrary a, Arbitrary b, Arbitrary c) => Arbitrary (Three a b c) where
+  arbitrary = threeGen
+
 main :: IO ()
 main = do
   quickCheck f
@@ -57,6 +72,8 @@ main = do
   quickCheck fPair
   quickCheck liPair
   quickCheck fTwo
+  quickCheck liTwo
+  quickCheck fThree
   where
     f :: Identity Int -> Bool
     f x = functorIdentity x
@@ -64,6 +81,8 @@ main = do
     fPair x = functorIdentity x
     fTwo :: Two Int Char -> Bool
     fTwo x = functorIdentity x
+    fThree :: Three Int Char String -> Bool
+    fThree x = functorIdentity x
     c = functorCompose (+ 1) (* 2)
     li x = c (x :: Identity Int)
     cPair = functorCompose (+ 1) (* 2)
