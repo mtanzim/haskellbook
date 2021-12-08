@@ -84,6 +84,33 @@ data Four a b c d = Four a b c d deriving (Eq, Show)
 instance Functor (Four a b c) where
   fmap f (Four a b c d) = Four a b c (f d)
 
+fourGen :: (Arbitrary a, Arbitrary b, Arbitrary c, Arbitrary d) => Gen (Four a b c d)
+fourGen = do
+  a <- arbitrary
+  b <- arbitrary
+  c <- arbitrary
+  d <- arbitrary
+  return (Four a b c d)
+
+instance (Arbitrary a, Arbitrary b, Arbitrary c, Arbitrary d) => Arbitrary (Four a b c d) where
+  arbitrary = fourGen
+
+data Four' a b = Four' a a a b deriving (Eq, Show)
+
+instance Functor (Four' a) where
+  fmap f (Four' a a' a'' b) = Four' a a' a'' (f b)
+
+fourGen' :: (Arbitrary a, Arbitrary b) => Gen (Four' a b)
+fourGen' = do
+  a <- arbitrary
+  b <- arbitrary
+  return (Four' a a a b)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Four' a b) where
+  arbitrary = fourGen'
+
+-- NO, you cannot make a Functor instance of Trivial, since it has kind *
+
 main :: IO ()
 main = do
   quickCheck f
@@ -96,6 +123,10 @@ main = do
   quickCheck liThree
   quickCheck fThree'
   quickCheck liThree'
+  quickCheck fFour
+  quickCheck liFour
+  quickCheck fFour'
+  quickCheck liFour'
   where
     f :: Identity Int -> Bool
     f x = functorIdentity x
@@ -109,6 +140,8 @@ main = do
     fThree' x = functorIdentity x
     fFour :: Four Int Char Char Double -> Bool
     fFour x = functorIdentity x
+    fFour' :: Four' Int Char -> Bool
+    fFour' x = functorIdentity x
     c = functorCompose (+ 1) (* 2)
     li x = c (x :: Identity Int)
     cPair = functorCompose (+ 1) (* 2)
@@ -121,3 +154,5 @@ main = do
     liThree' x = cThree' (x :: Three' Int String)
     cFour = functorCompose (* 3) (+ 1)
     liFour x = cFour (x :: Four String Char Double Int)
+    cFour' = functorCompose (* 3) (+ 1)
+    liFour' x = cFour' (x :: Four' String Int)
