@@ -1,6 +1,7 @@
 module Day8 where
 
 import Data.List.Split
+import qualified Data.Map as Map
 
 day8TestInput :: IO [[String]]
 day8TestInput = do
@@ -12,6 +13,9 @@ testInput = [["be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb", "fdg
 
 onlyDigitOutputs :: [[String]] -> [String]
 onlyDigitOutputs = map last
+
+onlyDigitInputs :: [[String]] -> [String]
+onlyDigitInputs = map head
 
 wordsInDigits :: [String] -> [String]
 wordsInDigits = concat . map words
@@ -26,20 +30,36 @@ countInstancesOfSimpleDigits = length . filter fn . wordsInDigits . onlyDigitOut
       7 -> True
       _ -> False
 
-mapOfDigits :: [(Char, [Char])]
-mapOfDigits =
-  [ ('0', "abcefg"),
-    ('1', "cf"),
-    ('2', "acdeg"),
-    ('3', "acdfg"),
-    ('4', "bcdf"),
-    ('5', "abdfg"),
-    ('6', "abdefg"),
-    ('7', "acf"),
-    ('8', "abcdefg"),
-    ('9', "abcdfg")
-  ]
+findTheEight :: [[String]] -> [[Char]]
+findTheEight = filter fn . wordsInDigits . onlyDigitInputs
+  where
+    fn word = length word == 7
 
+makeCharMappingOfSegments :: [Char] -> [Char] -> Map.Map Char Char
+makeCharMappingOfSegments rightSegment wrongSegment =
+  Map.fromList (map (\i -> (rightSegment !! i, wrongSegment !! i)) [0 .. (length rightSegment - 1)])
+
+makeIncorrectMapOfDigis charLookup =
+  Map.mapWithKey fn mapOfDigits
+  where
+    fn segmentChars digit = (map (\segment -> charLookup Map.! segment) segmentChars, digit)
+
+mapOfDigits :: Map.Map [Char] Char
+mapOfDigits =
+  Map.fromList
+    [ ("abcefg", '0'),
+      ("cf", '1'),
+      ("acdeg", '2'),
+      ("acdfg", '3'),
+      ("bcdf", '4'),
+      ("abdfg", '5'),
+      ("abdefg", '6'),
+      ("acf", '7'),
+      ("abcdefg", '8'),
+      ("abcdfg", '9')
+    ]
+
+testMain :: Int
 testMain = countInstancesOfSimpleDigits testInput
 
 main :: IO ()
