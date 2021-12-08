@@ -39,10 +39,11 @@ makeCharMappingOfSegments :: [Char] -> [Char] -> Map.Map Char Char
 makeCharMappingOfSegments rightSegment wrongSegment =
   Map.fromList (map (\i -> (rightSegment !! i, wrongSegment !! i)) [0 .. (length rightSegment - 1)])
 
+makeIncorrectMapOfDigis :: Map.Map Char Char -> Map.Map [Char] Char
 makeIncorrectMapOfDigis charLookup =
-  Map.mapWithKey fn mapOfDigits
+  Map.mapKeys fn mapOfDigits
   where
-    fn segmentChars digit = (map (\segment -> charLookup Map.! segment) segmentChars, digit)
+    fn segmentChars = map (\segment -> charLookup Map.! segment) segmentChars
 
 mapOfDigits :: Map.Map [Char] Char
 mapOfDigits =
