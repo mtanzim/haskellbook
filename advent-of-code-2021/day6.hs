@@ -33,5 +33,22 @@ buildStatusMap = foldr (\x curMap -> Map.insert x (newValue curMap x) curMap) Ma
   where
     newValue curMap x = (Map.findWithDefault 0 x curMap) + 1
 
-testMain :: Int
-testMain = fishSimulator testInput 256
+elapseFaster :: Map.Map Integer Integer -> Map.Map Integer Integer
+elapseFaster currentFishMap =
+  let curZeroes = Map.findWithDefault 0 0 currentFishMap
+   in Map.fromList
+        [ (0, Map.findWithDefault 0 1 currentFishMap),
+          (1, Map.findWithDefault 0 2 currentFishMap),
+          (2, Map.findWithDefault 0 3 currentFishMap),
+          (3, Map.findWithDefault 0 4 currentFishMap),
+          (4, Map.findWithDefault 0 5 currentFishMap),
+          (5, Map.findWithDefault 0 6 currentFishMap),
+          (6, Map.findWithDefault 0 7 currentFishMap + Map.findWithDefault 0 0 currentFishMap),
+          (7, Map.findWithDefault 0 8 currentFishMap),
+          (8, Map.findWithDefault 0 6 currentFishMap + curZeroes)
+        ]
+
+fishSimulatorFaster :: [Integer] -> Integer -> Map.Map Integer Integer
+fishSimulatorFaster initState days = foldr (\day acc -> elapseFaster acc) (buildStatusMap initState) [1 .. days]
+
+testMain = fishSimulatorFaster testInput 3
