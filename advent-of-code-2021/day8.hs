@@ -13,11 +13,11 @@ testInput = [["be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb", "fdg
 onlyDigitOutputs :: [[String]] -> [String]
 onlyDigitOutputs = map last
 
-wordsInInput :: [[String]] -> [String]
-wordsInInput = concat . map words . onlyDigitOutputs
+wordsInDigits :: [String] -> [String]
+wordsInDigits = concat . map words
 
 countInstancesOfSimpleDigits :: [[String]] -> Int
-countInstancesOfSimpleDigits = length . filter fn . wordsInInput
+countInstancesOfSimpleDigits = length . filter fn . wordsInDigits . onlyDigitOutputs
   where
     fn word = case length word of
       2 -> True
@@ -26,7 +26,23 @@ countInstancesOfSimpleDigits = length . filter fn . wordsInInput
       7 -> True
       _ -> False
 
+mapOfDigits :: [(Char, [Char])]
+mapOfDigits =
+  [ ('0', "abcefg"),
+    ('1', "cf"),
+    ('2', "acdeg"),
+    ('3', "acdfg"),
+    ('4', "bcdf"),
+    ('5', "abdfg"),
+    ('6', "abdefg"),
+    ('7', "acf"),
+    ('8', "abcdefg"),
+    ('9', "abcdfg")
+  ]
+
+testMain = countInstancesOfSimpleDigits testInput
+
 main :: IO ()
 main = do
-    input <- day8TestInput
-    print (countInstancesOfSimpleDigits input)
+  input <- day8TestInput
+  print (countInstancesOfSimpleDigits input)
