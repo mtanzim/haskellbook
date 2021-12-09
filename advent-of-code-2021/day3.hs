@@ -1,4 +1,4 @@
-module Day3 where
+module Day3(day3Main) where
 
 import Data.Char (digitToInt)
 import Data.List (foldl')
@@ -13,8 +13,8 @@ day3Limit = do
   entries <- day3Input
   return (length (head entries) - 1)
 
-main :: IO ()
-main = do
+day3Main :: IO ()
+day3Main = do
   input <- day3Input
   limit <- day3Limit
   print (powerConsumption input limit)

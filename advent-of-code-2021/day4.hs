@@ -1,4 +1,4 @@
-module Day4 where
+module Day4(day4Main) where
 
 import Data.List.Split
 
@@ -19,8 +19,8 @@ day4Boards = do
       gameBoards = map (\chunk -> (map (map (\x -> read x :: Integer)) chunk)) chunks'
    in return (gameBoards)
 
-main :: IO ()
-main = do
+day4Main :: IO ()
+day4Main = do
   boards <- day4Boards
   draws <- day4Draws
   print (runGame boards (map prepareMarkedBoard boards) draws)

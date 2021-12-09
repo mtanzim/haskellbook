@@ -1,4 +1,4 @@
-module Day5 where
+module Day5(day5Main) where
 
 import Data.List.Split
 import qualified Data.Map as Map
@@ -7,8 +7,8 @@ type Coordinate = (Integer, Integer)
 
 type LineDefinition = (Coordinate, Coordinate)
 
-main :: IO ()
-main = do
+day5Main :: IO ()
+day5Main = do
   input <- day5Input
   -- Part a
   print (numOverlappingPointsFromStraightLines input)

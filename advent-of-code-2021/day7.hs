@@ -1,4 +1,4 @@
-module Day7 where
+module Day7(day7Main) where
 
 import Data.List
 import Data.List.Split
@@ -8,8 +8,8 @@ day7Input = do
   inputs <- readFile "day7Input.txt"
   return (map (\x -> read x :: Integer) (splitOn "," inputs))
 
-main :: IO ()
-main = do
+day7Main :: IO ()
+day7Main = do
   input <- day7Input
   let sortedInput = sort input
       range = [head sortedInput .. last sortedInput]

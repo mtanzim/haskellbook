@@ -1,4 +1,4 @@
-module Day8 where
+module Day8(day8Main) where
 
 import Data.List
 import Data.List.Split
@@ -72,7 +72,8 @@ mapOfDigits =
 testMain :: Int
 testMain = countInstancesOfSimpleDigits testInput
 
-main :: IO ()
-main = do
+day8Main :: IO ()
+day8Main = do
   input <- day8TestInput
   print (countInstancesOfSimpleDigits input)
+  -- TODO: part b

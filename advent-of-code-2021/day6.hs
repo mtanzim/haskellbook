@@ -1,4 +1,4 @@
-module Day6 where
+module Day6(day6Main) where
 
 import Data.List.Split
 import qualified Data.Map as Map
@@ -8,8 +8,8 @@ day6Input = do
   inputs <- readFile "day6Input.txt"
   return (map (\x -> read x :: Integer) (splitOn "," inputs))
 
-main :: IO ()
-main = do
+day6Main :: IO ()
+day6Main = do
   input <- day6Input
   print (fishSimulatorFaster input 80)
   print (fishSimulatorFaster input 256)

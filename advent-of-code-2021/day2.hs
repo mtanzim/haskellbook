@@ -1,4 +1,4 @@
-module Day2 where
+module Day2 (day2Main) where
 
 type Input = [(String, Integer)]
 
@@ -39,8 +39,8 @@ calcPosWithAim lst =
           "down" -> go tail totalX totalY (totalAim + val)
           _ -> undefined
 
-main :: IO ()
-main = do
+day2Main :: IO ()
+day2Main = do
   input <- day2Input
   print (calcPos input)
   print (calcPosWithAim input)
