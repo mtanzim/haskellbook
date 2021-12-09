@@ -1,4 +1,4 @@
-module AdventDay1 where
+module Day1 (day1Main) where
 
 testInput :: [Integer]
 testInput = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
@@ -27,8 +27,8 @@ sums lst = reverse (go lst [])
 numIncreasesWindow :: [Integer] -> Integer
 numIncreasesWindow = numIncreases . sums
 
-main :: IO ()
-main = do
+day1Main :: IO ()
+day1Main = do
   input <- day1Input
   print (numIncreases input)
   print (numIncreasesWindow input)

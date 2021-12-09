@@ -1,4 +1,4 @@
-module AdventDay2 where
+module Day2 where
 
 type Input = [(String, Integer)]
 

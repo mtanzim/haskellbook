@@ -1,4 +1,4 @@
-module AdventDay3 where
+module Day3 where
 
 import Data.Char (digitToInt)
 import Data.List (foldl')
