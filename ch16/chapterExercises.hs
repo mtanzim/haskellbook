@@ -60,3 +60,39 @@ instance Functor f => Functor (LiftItOut f) where
   fmap f (LiftItOut ga) = LiftItOut (fmap f ga)
 
 data Parappa f g a = Dawrappa (f a) (g a) deriving (Eq, Show)
+
+instance (Functor f, Functor g) => Functor (Parappa f g) where
+  fmap f (Dawrappa fa ga) = Dawrappa (fmap f fa) (fmap f ga)
+
+data IgnoreOne f g a b = IgnoringSomething (f a) (g b)
+
+instance Functor g => Functor (IgnoreOne f g a) where
+  fmap f (IgnoringSomething fa gb) = IgnoringSomething fa (fmap f gb)
+
+data Notorious g o a t = Notorious (g o) (g a) (g t)
+
+instance Functor g => Functor (Notorious g o a) where
+  fmap f (Notorious go ga gt) = Notorious go ga (fmap f gt)
+
+data List a = Nil | Cons a (List a)
+
+instance Functor List where
+  fmap _ Nil = Nil
+  fmap f (Cons a rest) = Cons (f a) (fmap f rest)
+
+data GoatLord a
+  = NoGoat
+  | OneGoat a
+  | MoreGoats (GoatLord a) (GoatLord a) (GoatLord a)
+
+instance Functor (GoatLord) where
+  fmap _ NoGoat = NoGoat
+  fmap f (OneGoat a) = OneGoat (f a)
+  fmap f (MoreGoats gla glb glc) = MoreGoats (fmap f gla) (fmap f glb) (fmap f glc)
+
+data TalkToMe a = Halt | Print String a | Read (String -> a)
+
+instance Functor (TalkToMe) where
+  fmap _ Halt = Halt
+  fmap f (Print s a) = Print s (f a)
+  fmap f (Read sa) = Read (fmap f sa)
