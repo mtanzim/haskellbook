@@ -7,4 +7,3 @@ Advent of code 2021 was moved [here](https://github.com/mtanzim/advent-of-code-2
 ## Why?
 
 - Curiosity around functional programming
-- It will give me wings?
