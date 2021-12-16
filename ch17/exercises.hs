@@ -72,3 +72,10 @@ instance Functor (Constant a) where
 instance Monoid a => Applicative (Constant a) where
   pure _ = Constant mempty
   (Constant a) <*> (Constant a') = Constant (a <> a')
+
+-- fixer upper
+fixerUpper1 :: Maybe [Char]
+fixerUpper1 = const <$> Just "Hello" <*> Just "World"
+
+fixerUpper2 :: Maybe (Integer, Integer, [Char], [Integer])
+fixerUpper2 = (,,,) <$> Just 90 <*> Just 10 <*> Just "Tierness" <*> Just [1, 2, 3, 4]
