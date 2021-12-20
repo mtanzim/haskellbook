@@ -22,9 +22,18 @@ instance Functor ZipList' where
 
 instance Applicative ZipList' where
   pure l = ZipList' [l]
---   (f : fs) <*> (l : ls) = fmap f l : (fs <*> ls)
+  ZipList' (f : fs) <*> ZipList' (l : ls) = ZipList' (f l : (fs <*> ls))
   (ZipList' []) <*> _ = ZipList' []
   _ <*> (ZipList' []) = ZipList' []
 
+-- TODO: make sense of this solution:
+-- https://github.com/andrewMacmurray/haskell-book-solutions/blob/f4fd386187c03828d1736d9a43642ab4f0ec6462/src/ch17/List.hs
 -- main :: IO ()
--- main = quickBatch $ applicative (ZipList' 'a')
+-- main = quickBatch $ applicative (ZipList' [])
+
+testMain :: ZipList' Integer
+testMain =
+  let zl' = ZipList'
+      z = zl' [(+ 9), (* 2), (+ 8)]
+      z' = zl' [1 .. 3]
+   in z <*> z'
