@@ -32,6 +32,28 @@ instance Arbitrary a => Arbitrary (Pair a) where
 instance Eq a => EqProp (Pair a) where
   (=-=) = eq
 
+data Two a b = Two a b deriving (Eq, Show)
+
+instance Functor (Two a) where
+  fmap f (Two a b) = Two a (f b)
+
+instance Monoid a => Applicative (Two a) where
+  pure b = Two mempty b
+  (Two a fb) <*> (Two a' b) = Two (a <> a') (fb b)
+
+twoGen :: (Arbitrary a, Arbitrary b) => Gen (Two a b)
+twoGen = do
+  a <- arbitrary
+  b <- arbitrary
+  return (Two a b)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Two a b) where
+  arbitrary = twoGen
+
+instance (Eq a, Eq b) => EqProp (Two a b) where
+  (=-=) = eq
+
 main :: IO ()
 main = do
-    quickBatch $ applicative (Pair ('a', 'b', 'c') ('d', 'e', 'f'))
+  quickBatch $ applicative (Pair ('a', 'b', 'c') ('d', 'e', 'f'))
+  quickBatch $ applicative (Two ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
