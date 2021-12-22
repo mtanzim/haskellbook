@@ -112,6 +112,13 @@ fourGen = do
 instance (Arbitrary a, Arbitrary b, Arbitrary c, Arbitrary d) => Arbitrary (Four a b c d) where
   arbitrary = fourGen
 
+instance (Eq a, Eq b, Eq c, Eq d) => EqProp (Four a b c d) where
+  (=-=) = eq
+
+instance (Monoid a, Monoid b, Monoid c) => Applicative (Four a b c) where
+  pure d = Four mempty mempty mempty d
+  Four a b c fd <*> Four a' b' c' d = Four (a <> a') (b <> b') (c <> c') (fd d)
+
 data Four' a b = Four' a a a b deriving (Eq, Show)
 
 instance Functor (Four' a) where
@@ -132,3 +139,4 @@ main = do
   quickBatch $ applicative (Two ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
   quickBatch $ applicative (Three ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
   quickBatch $ applicative (Three' ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
+  quickBatch $ applicative (Four ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
