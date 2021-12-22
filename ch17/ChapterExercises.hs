@@ -7,13 +7,6 @@ import Test.QuickCheck.Classes
 
 data Pair a = Pair a a deriving (Eq, Show)
 
--- instance Semigroup a => Semigroup (Pair a) where
---   Pair x x' <> Pair y y' = Pair (x <> x') (y <> y')
-
--- instance Monoid a => Monoid (Pair a) where
---   mappend = (<>)
---   mempty = Pair mempty mempty
-
 instance Functor Pair where
   fmap f (Pair a a') = Pair (f a) (f a')
 
@@ -124,6 +117,10 @@ data Four' a b = Four' a a a b deriving (Eq, Show)
 instance Functor (Four' a) where
   fmap f (Four' a a' a'' b) = Four' a a' a'' (f b)
 
+instance Monoid a => Applicative (Four' a) where
+  pure b = Four' mempty mempty mempty b
+  Four' a1 a2 a3 fb <*> Four' a1' a2' a3' b = Four' (a1 <> a1') (a2 <> a2') (a3 <> a3') (fb b)
+
 fourGen' :: (Arbitrary a, Arbitrary b) => Gen (Four' a b)
 fourGen' = do
   a <- arbitrary
@@ -133,6 +130,9 @@ fourGen' = do
 instance (Arbitrary a, Arbitrary b) => Arbitrary (Four' a b) where
   arbitrary = fourGen'
 
+instance (Eq a, Eq b) => EqProp (Four' a b) where
+  (=-=) = eq
+
 main :: IO ()
 main = do
   quickBatch $ applicative (Pair ('a', 'b', 'c') ('d', 'e', 'f'))
@@ -140,3 +140,4 @@ main = do
   quickBatch $ applicative (Three ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
   quickBatch $ applicative (Three' ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
   quickBatch $ applicative (Four ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
+  quickBatch $ applicative (Four' ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
