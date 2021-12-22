@@ -75,8 +75,60 @@ instance (Arbitrary a, Arbitrary b, Arbitrary c) => Arbitrary (Three a b c) wher
 instance (Eq a, Eq b, Eq c) => EqProp (Three a b c) where
   (=-=) = eq
 
+data Three' a b = Three' a b b deriving (Eq, Show)
+
+instance Functor (Three' a) where
+  fmap f (Three' a b b') = Three' a (f b) (f b')
+
+threeGen' :: (Arbitrary a, Arbitrary b) => Gen (Three' a b)
+threeGen' = do
+  a <- arbitrary
+  b <- arbitrary
+  return (Three' a b b)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Three' a b) where
+  arbitrary = threeGen'
+
+instance (Eq a, Eq b) => EqProp (Three' a b) where
+  (=-=) = eq
+
+instance Monoid a => Applicative (Three' a) where
+  pure b = Three' mempty b b
+  Three' a fb fb' <*> Three' a' b b' = Three' (a <> a') (fb b) (fb' b')
+
+data Four a b c d = Four a b c d deriving (Eq, Show)
+
+instance Functor (Four a b c) where
+  fmap f (Four a b c d) = Four a b c (f d)
+
+fourGen :: (Arbitrary a, Arbitrary b, Arbitrary c, Arbitrary d) => Gen (Four a b c d)
+fourGen = do
+  a <- arbitrary
+  b <- arbitrary
+  c <- arbitrary
+  d <- arbitrary
+  return (Four a b c d)
+
+instance (Arbitrary a, Arbitrary b, Arbitrary c, Arbitrary d) => Arbitrary (Four a b c d) where
+  arbitrary = fourGen
+
+data Four' a b = Four' a a a b deriving (Eq, Show)
+
+instance Functor (Four' a) where
+  fmap f (Four' a a' a'' b) = Four' a a' a'' (f b)
+
+fourGen' :: (Arbitrary a, Arbitrary b) => Gen (Four' a b)
+fourGen' = do
+  a <- arbitrary
+  b <- arbitrary
+  return (Four' a a a b)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Four' a b) where
+  arbitrary = fourGen'
+
 main :: IO ()
 main = do
   quickBatch $ applicative (Pair ('a', 'b', 'c') ('d', 'e', 'f'))
   quickBatch $ applicative (Two ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
   quickBatch $ applicative (Three ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
+  quickBatch $ applicative (Three' ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
