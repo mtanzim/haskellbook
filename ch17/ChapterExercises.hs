@@ -1,5 +1,6 @@
 module ChapterExercises where
 
+import Control.Applicative (liftA3)
 import Test.QuickCheck
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Checkers
@@ -133,6 +134,20 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Four' a b) where
 instance (Eq a, Eq b) => EqProp (Four' a b) where
   (=-=) = eq
 
+stops :: String
+stops = "pbtdkg"
+
+vowels :: String
+vowels = "aeiou"
+
+-- See this: https://github.com/mtanzim/haskellbook/blob/98a2ca3ab061bb77fb90e7e7dd22e39dfa7d396c/ch17/exercises.hs#L81
+combos :: [a] -> [b] -> [c] -> [(a, b, c)]
+-- combos a b c = [(s, v, s') | s <- a, v <- b, s' <- c]
+-- combos a b c = (((fmap (,,) a) <*> b) <*> c)
+-- combos a b c = (,,) <$> a <*> b <*> c
+-- combos a b c = liftA3 (,,) a b c
+combos = liftA3 (,,)
+
 main :: IO ()
 main = do
   quickBatch $ applicative (Pair ('a', 'b', 'c') ('d', 'e', 'f'))
@@ -141,3 +156,4 @@ main = do
   quickBatch $ applicative (Three' ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
   quickBatch $ applicative (Four ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
   quickBatch $ applicative (Four' ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc") ("abc", "bbc", "cbc"))
+  print (combos stops vowels stops)
