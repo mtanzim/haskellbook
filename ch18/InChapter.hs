@@ -1,8 +1,18 @@
 module InChapter where
 
-twiceWhenEven :: [Integer] -> [Integer]
-twiceWhenEven xs = do
+twiceWhenEven :: [Integer] -> [Integer] -> [Integer]
+twiceWhenEven xs ys = do
   x <- xs
   if even x
-    then [x * x, x * x]
-    else [42]
+    then do
+      y <- ys
+      if even y
+        then [x, y]
+        else [y]
+    else [x]
+
+crossProduct :: [Integer] -> [Integer] -> [Integer]
+crossProduct xs ys = do
+  x <- xs
+  y <- ys
+  [x, y]
