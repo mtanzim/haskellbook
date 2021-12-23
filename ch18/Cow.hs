@@ -38,7 +38,7 @@ makeSphericalCow name' age' weight' =
 
 -- sugar with do
 -- note that this cannot be done with applicative b/c weightCheck expects a Cow and NOT a Maybe Cow
--- See for comparison: 
+-- See for comparison: https://github.com/mtanzim/haskellbook/blob/53b33690d0b91db77448d0aec92ec6e6b828f88c/ch17/Validation.hs#L52
 makeSphericalCow' :: String -> Int -> Int -> Maybe Cow
 makeSphericalCow' name' age' weight' = do
   nammy <- noEmpty name'
