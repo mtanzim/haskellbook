@@ -13,3 +13,6 @@ l2 = liftM2
 
 a :: Monad m => m a -> m (a -> b) -> m b
 a = flip ap
+
+meh :: Monad m => [a] -> (a -> m b) -> m [b]
+meh [] _ = return []
