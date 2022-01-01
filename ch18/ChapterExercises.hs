@@ -54,6 +54,29 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (BahEither b a) where
 instance (Eq a, Eq b) => EqProp (BahEither b a) where
   (=-=) = eq
 
+newtype Identity a = Identity a deriving (Eq, Show)
+
+instance Functor Identity where
+  fmap f (Identity a) = Identity (f a)
+
+instance Applicative Identity where
+  pure a = Identity a
+  Identity f <*> Identity a = Identity (f a)
+
+instance Monad Identity where
+  return = pure
+  Identity a >>= f = f a
+
+identityGen :: Arbitrary a => Gen (Identity a)
+identityGen = do
+  fmap Identity arbitrary
+
+instance Arbitrary a => Arbitrary (Identity a) where
+  arbitrary = identityGen
+
+instance (Eq a) => EqProp (Identity a) where
+  (=-=) = eq
+
 test trigger = do
   quickBatch $ functor trigger
   quickBatch $ applicative trigger
@@ -61,5 +84,9 @@ test trigger = do
 
 main :: IO ()
 main = do
+  putStrLn ("\nBahEither")
   test (undefined :: BahEither String (Int, Int, Int))
+  putStrLn ("\nNope")
   test (undefined :: Nope (String, String, String))
+  putStrLn ("\nIdentity")
+  test (undefined :: Identity (String, String, String))
