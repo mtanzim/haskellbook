@@ -12,15 +12,19 @@ product' = getProduct . foldMap Product
 elem' :: (Foldable t, Eq a) => a -> t a -> Bool
 elem' a t = getAny $ foldMap (Any . (== a)) t
 
--- TODO: agh come back to this
--- minimum' :: (Foldable t, Ord a) => t a -> Maybe a
--- minimum' = foldr fn Nothing
---   where
---     fn acc cur = case (acc, cur) of
---       (Nothing, cur') -> Just cur'
---       (Just acc', cur') -> if cur' < acc' then Just cur' else Just acc'
+minimum' :: (Foldable t, Ord a) => t a -> Maybe a
+minimum' = foldr fn Nothing
+  where
+    fn cur acc = case (acc, cur) of
+      (Nothing, cur') -> Just cur'
+      (Just acc', cur') -> if cur' < acc' then Just cur' else Just acc'
 
--- maximum' = (Foldable t, Ord a) => t a -> Maybe a
+maximum' :: (Foldable t, Ord a) => t a -> Maybe a
+maximum' = foldr fn Nothing
+  where
+    fn cur acc = case (acc, cur) of
+      (Nothing, cur') -> Just cur'
+      (Just acc', cur') -> if cur' > acc' then Just cur' else Just acc'
 
 length' :: (Foldable t) => t a -> Int
 length' = foldr (\acc cur -> cur + 1) 0
