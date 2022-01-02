@@ -21,3 +21,18 @@ elem' a t = getAny $ foldMap (Any . (== a)) t
 --       (Just acc', cur') -> if cur' < acc' then Just cur' else Just acc'
 
 -- maximum' = (Foldable t, Ord a) => t a -> Maybe a
+
+length' :: (Foldable t) => t a -> Int
+length' = foldr (\acc cur -> cur + 1) 0
+
+null' :: (Foldable t) => t a -> Bool
+null' = (== 0) . length'
+
+toList' :: (Foldable t) => t a -> [a]
+toList' = foldMap (: [])
+
+fold' :: (Foldable t, Monoid m) => t m -> m
+fold' = foldMap id
+
+foldMap' :: (Foldable t, Monoid m) => (a -> m) -> t a -> m
+foldMap' f = foldr (\cur acc -> f cur <> acc) mempty
