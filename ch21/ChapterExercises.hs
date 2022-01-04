@@ -31,11 +31,39 @@ instance Arbitrary a => Arbitrary (Identity a) where
 instance (Eq a) => EqProp (Identity a) where
   (=-=) = eq
 
+newtype Constant a b = Constant {getConstant :: a} deriving (Eq, Show)
+
+instance Functor (Constant a) where
+  fmap _ (Constant a) = Constant a
+
+instance Monoid a => Applicative (Constant a) where
+  pure _ = Constant mempty
+  (Constant a) <*> (Constant a') = Constant (a <> a')
+
+instance Foldable (Constant a) where
+  foldMap _ _ = mempty
+
+instance Traversable (Constant a) where
+  traverse f (Constant a) = pure (Constant a)
+
+constantGen :: (Arbitrary a, Arbitrary b) => Gen (Constant a b)
+constantGen = do
+  a <- arbitrary
+  return (Constant a)
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Constant a b) where
+  arbitrary = constantGen
+
+instance (Eq a, Eq b) => EqProp (Constant a b) where
+  (=-=) = eq
+
 test trigger = do
-  quickBatch $ functor trigger
-  quickBatch $ applicative trigger
   quickBatch $ traversable trigger
+
+type Trigger = (Int, [Int], [Char])
 
 main :: IO ()
 main = do
-  test $ Identity (['a'], ['b'], ['c'])
+  let trigger = undefined
+  test (trigger :: Identity Trigger)
+  test (trigger :: Constant Int Trigger)
