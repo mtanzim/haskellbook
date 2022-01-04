@@ -57,13 +57,52 @@ instance (Arbitrary a, Arbitrary b) => Arbitrary (Constant a b) where
 instance (Eq a, Eq b) => EqProp (Constant a b) where
   (=-=) = eq
 
+data BahEither b a = PRight b | PLeft a deriving (Eq, Show)
+
+instance Functor (BahEither b) where
+  fmap _ (PRight b) = PRight b
+  fmap f (PLeft a) = PLeft (f a)
+
+instance Monoid b => Applicative (BahEither b) where
+  pure a = PLeft a
+  PRight b <*> PRight b' = PRight (b <> b')
+  PRight b <*> _ = PRight b
+  _ <*> PRight b = PRight b
+  PLeft f <*> PLeft a = PLeft (f a)
+
+instance Monoid b => Monad (BahEither b) where
+  return = pure
+  (PRight b) >>= _ = PRight b
+  (PLeft a) >>= f = f a
+
+instance Monoid b => Foldable (BahEither b) where
+  foldMap f (PRight b) = mempty
+  foldMap f (PLeft a) = f a
+
+instance Monoid b => Traversable (BahEither b) where
+  traverse f (PRight b) = pure (PRight b)
+  traverse f (PLeft a) = PLeft <$> f a
+
+genEither :: (Arbitrary a, Arbitrary b) => Gen (BahEither b a)
+genEither = do
+  a <- arbitrary
+  b <- arbitrary
+  elements [PLeft a, PRight b]
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (BahEither b a) where
+  arbitrary = genEither
+
+instance (Eq a, Eq b) => EqProp (BahEither b a) where
+  (=-=) = eq
+
 test trigger = do
   quickBatch $ traversable trigger
 
-type Trigger = (Int, [Int], [Char])
+type Trigger = ([Int], [Int], [Char])
 
 main :: IO ()
 main = do
   let trigger = undefined
   test (trigger :: Identity Trigger)
   test (trigger :: Constant Int Trigger)
+  test (trigger :: BahEither Trigger Trigger)
