@@ -1,4 +1,5 @@
 import Control.Applicative (liftA2)
+import InChapter (Reader (Reader))
 
 newtype HumanName = HumanName String deriving (Eq, Show)
 
@@ -52,3 +53,12 @@ getDogR = Dog <$> dogName <*> address
 -- liftA2 Dog dogName address :: Person -> Dog
 getDogR' :: Person -> Dog
 getDogR' = liftA2 Dog dogName address
+
+getDogRM :: Person -> Dog
+getDogRM = do
+  name <- dogName
+  addy <- address
+  return $ Dog name addy
+
+getDogRM' :: Reader Person Dog
+getDogRM' = Reader (\p -> Dog (dogName p) (address p))
