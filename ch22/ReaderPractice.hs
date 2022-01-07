@@ -1,5 +1,9 @@
 module ReaderPractice where
 
+import Data.Foldable
+import Data.Maybe
+import Data.Monoid
+
 -- import Data.List (find)
 
 x = [1, 2, 3]
@@ -41,6 +45,9 @@ bolt = (&&) <$> (> 3) <*> (< 8)
 sequA :: Integral a => a -> [Bool]
 sequA = sequenceA [(> 3), (< 8), even]
 
+s' :: Maybe Integer
+s' = summed <$> ((,) <$> xs <*> ys)
+
 main :: IO ()
 main = do
   print $ sequenceA [Just 3, Just 2, Just 1]
@@ -51,3 +58,9 @@ main = do
   print $ bolt 7
   print $ fmap bolt z
   print $ sequenceA [(> 3), (< 8), even] 7
+  print $ sequA 3
+  print $ fold $ All <$> sequA 3
+  print $ sequA 4
+  print $ fold $ All <$> sequA 4
+  print $ sequA $ fromMaybe 0 s'
+  print $ bolt $ fromMaybe 0 ys
