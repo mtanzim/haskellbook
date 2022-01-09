@@ -30,8 +30,12 @@ addResult n = do
   let result = fizzBuzz n
   put (result : xs)
 
+fizzBuzFromTo :: Integer -> Integer -> [String]
+fizzBuzFromTo from to = fizzbuzzList $ enumFromThenTo to (to - 1) from
+
 main :: IO ()
 main = do
   --   mapM_ (putStrLn . fizzBuzz) [1 .. 100]
   --   mapM_ putStrLn $ reverse $ fizzbuzzList' [1 .. 100]
-  mapM_ putStrLn $ fizzbuzzList' [1 .. 100]
+--   mapM_ putStrLn $ fizzbuzzList' [1 .. 100]
+  mapM_ putStrLn $ fizzBuzFromTo 1 100
