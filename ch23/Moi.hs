@@ -14,6 +14,7 @@ instance Applicative (Moi s) where
   (<*>) :: Moi s (a -> b) -> Moi s a -> Moi s b
   (Moi f) <*> (Moi g) = Moi $ \s -> (fst (f s) (fst (g s)), s)
 
+-- TODO: does this work?
 instance Monad (Moi s) where
   return = pure
   (>>=) :: Moi s a -> (a -> Moi s b) -> Moi s b

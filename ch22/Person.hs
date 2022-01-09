@@ -1,3 +1,5 @@
+module Person where
+
 import Control.Applicative (liftA2)
 import InChapter (Reader (Reader))
 
