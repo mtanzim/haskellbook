@@ -37,5 +37,5 @@ main :: IO ()
 main = do
   --   mapM_ (putStrLn . fizzBuzz) [1 .. 100]
   --   mapM_ putStrLn $ reverse $ fizzbuzzList' [1 .. 100]
---   mapM_ putStrLn $ fizzbuzzList' [1 .. 100]
+  --   mapM_ putStrLn $ fizzbuzzList' [1 .. 100]
   mapM_ putStrLn $ fizzBuzFromTo 1 100
