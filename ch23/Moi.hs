@@ -13,3 +13,8 @@ instance Applicative (Moi s) where
   pure a = Moi $ \s -> (a, s)
   (<*>) :: Moi s (a -> b) -> Moi s a -> Moi s b
   (Moi f) <*> (Moi g) = Moi $ \s -> (fst (f s) (fst (g s)), s)
+
+instance Monad (Moi s) where
+  return = pure
+  (>>=) :: Moi s a -> (a -> Moi s b) -> Moi s b
+  (Moi f) >>= g = Moi $ \s -> runMoi (g (fst (f s))) s
