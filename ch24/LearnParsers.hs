@@ -1,5 +1,6 @@
 module LearnParsers where
 
+import Control.Applicative
 import DriverPipeline (oneShot)
 import Text.Trifecta
 
@@ -23,6 +24,13 @@ oneTwo' = oneTwo >> stop
 
 oneTwoThreeDone :: Parser ()
 oneTwoThreeDone = oneTwo >> char '3' >> eof
+
+parse123String :: Parser String
+parse123String = string "123" <|> string "12" <|> string "1"
+
+-- TODO: this doesn't work :(
+parse123Char :: Parser Char
+parse123Char = (char '1' >> char '2' >> char '3') <|> (char '1' >> char '2') <|> char '1'
 
 testParse :: Parser Char -> IO ()
 testParse p = print $ parseString p mempty "123"
@@ -51,4 +59,5 @@ main = do
   print $ parseString oneTwoThreeDone mempty "1234"
   pNL "oneTwoThreeDone failure 2"
   print $ parseString oneTwoThreeDone mempty "12"
-
+  pNL "parse123String"
+  print $ parseString parse123String mempty "123"
