@@ -1,7 +1,6 @@
 module LearnParsers where
 
 import Control.Applicative
-import DriverPipeline (oneShot)
 import Text.Trifecta
 
 stop :: Parser a
@@ -38,6 +37,7 @@ testParse p = print $ parseString p mempty "123"
 pNL :: [Char] -> IO ()
 pNL s = putStrLn ('\n' : s)
 
+main :: IO ()
 main = do
   pNL "stop:"
   testParse stop
