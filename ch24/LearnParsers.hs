@@ -29,7 +29,7 @@ parse123String = string "123" <|> string "12" <|> string "1"
 
 -- TODO: this doesn't work :(
 parse123Char :: Parser Char
-parse123Char = (char '1' >> char '2' >> char '3') <|> (char '1' >> char '2') <|> char '1'
+parse123Char = try (char '1' >> char '2' >> char '3') <|> try (char '1' >> char '2') <|> char '1'
 
 testParse :: Parser Char -> IO ()
 testParse p = print $ parseString p mempty "123"
