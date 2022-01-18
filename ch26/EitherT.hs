@@ -21,3 +21,24 @@ instance Monad m => Monad (EitherT e m) where
     case v of
       Left x -> return $ Left x
       Right y -> runEitherT $ f y
+
+swapEither :: Either e a -> Either a e
+swapEither (Left x) = Right x
+swapEither (Right x) = Left x
+
+swapEitherT :: Functor m => EitherT e m a -> EitherT a m e
+swapEitherT ema = EitherT $ swapEither <$> runEitherT ema
+
+-- either :: (a -> c) -> (b -> c) -> Either a b -> c
+-- EXAMPLES
+-- * EitherT> either (+2) (const 45) (Left 23)
+-- 25
+-- * EitherT> either (+2) (const 45) (Right 23)
+-- 45
+
+eitherT :: Monad m => (a -> m c) -> (b -> m c) -> EitherT a m b -> m c
+eitherT leftF rightG (EitherT ma) = do
+  v <- ma
+  case v of
+    Left x -> leftF x
+    Right y -> rightG y
