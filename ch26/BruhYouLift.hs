@@ -15,6 +15,7 @@ instance MonadTrans (EitherT e) where
 
 -- newtype State' s a = State' {runState :: s -> (a, s)}
 
+-- not sure if this works
 instance MonadTrans (StateT s) where
   lift :: Monad m => m a -> StateT s m a
   lift ma = StateT $ liftM State (\s -> (ma, s))
