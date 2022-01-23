@@ -6,6 +6,7 @@ import Data.Bool (Bool)
 import Data.Int (Int)
 import qualified Data.Map as M
 import Data.Maybe (fromMaybe)
+import Data.Monoid (Monoid (mconcat))
 import System.Random
 import Text.Read (readMaybe)
 
@@ -36,15 +37,15 @@ didPlayerWin config sum =
     (Odd, 1) -> True
     _ -> False
 
-updateScore :: Bool -> StateT Int IO Int
+updateScore :: Bool -> StateT (Int, Int) IO (Int, Int)
 updateScore won = do
-  cv <- get
+  (pS, cpuS) <- get
   if won
-    then put $ cv + 1
-    else put cv
+    then put (pS + 1, cpuS)
+    else put (pS, cpuS + 1)
   get
 
-runGame :: Config -> StateT Int IO ()
+runGame :: Config -> StateT (Int, Int) IO ()
 runGame con = do
   liftIO $ print con
   liftIO $ putStrLn "How many fingers? (0 to 5)"
@@ -59,9 +60,8 @@ runGame con = do
       liftIO $ putStrLn $ "CPU picked: " ++ show cpuVal
       liftIO $ putStrLn $ "Sum: " ++ show sum
       liftIO $ putStrLn $ "Did you win? " ++ show playerWon
-      latestScore <- updateScore playerWon
-      liftIO $ putStr "Player score: "
-      liftIO $ print latestScore
+      (pS, cpuS) <- updateScore playerWon
+      liftIO $ putStr $ mconcat ["Player score: ", show pS, ", CPU score: " ++ show cpuS]
       liftIO $ putStrLn ""
 
 -- https://wiki.haskell.org/Simple_StateT_use
@@ -73,5 +73,5 @@ main = do
   case config of
     Nothing -> error "Invalid input"
     Just con -> do
-      runStateT (forever $ runGame con) 0
+      runStateT (forever $ runGame con) (0, 0)
       return ()
