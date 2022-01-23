@@ -44,6 +44,26 @@ updateScore won = do
     else put cv
   get
 
+runGame :: Config -> StateT Int IO ()
+runGame con = do
+  liftIO $ print con
+  liftIO $ putStrLn "How many fingers? (0 to 5)"
+  fingers <- liftIO getLine
+  cpuVal <- randomRIO (0 :: Int, 5 :: Int)
+  let fingersN = getFingers fingers
+  case fingersN of
+    Nothing -> liftIO $ putStrLn "Invalid input, try again.\n\n"
+    Just n -> do
+      let sum = n + cpuVal
+          playerWon = didPlayerWin con sum
+      liftIO $ putStrLn $ "CPU picked: " ++ show cpuVal
+      liftIO $ putStrLn $ "Sum: " ++ show sum
+      liftIO $ putStrLn $ "Did you win? " ++ show playerWon
+      latestScore <- updateScore playerWon
+      liftIO $ putStr "Player score: "
+      liftIO $ print latestScore
+      liftIO $ putStrLn ""
+
 -- https://wiki.haskell.org/Simple_StateT_use
 main :: IO ()
 main = do
@@ -52,26 +72,6 @@ main = do
   let config = getConfig ans
   case config of
     Nothing -> error "Invalid input"
-    Just con ->
-      runStateT
-        ( forever $ do
-            liftIO $ print con
-            liftIO $ putStrLn "How many fingers? (0 to 5)"
-            fingers <- liftIO getLine
-            cpuVal <- randomRIO (0 :: Int, 5 :: Int)
-            let fingersN = getFingers fingers
-            case fingersN of
-              Nothing -> liftIO $ putStrLn "Invalid input, try again.\n\n"
-              Just n -> do
-                let sum = n + cpuVal
-                    playerWon = didPlayerWin con sum
-                liftIO $ putStrLn $ "CPU picked: " ++ show cpuVal
-                liftIO $ putStrLn $ "Sum: " ++ show sum
-                liftIO $ putStrLn $ "Did you win? " ++ show playerWon
-                gv <- updateScore playerWon
-                liftIO $ putStr $ "Player score: "
-                liftIO $ print gv
-                liftIO $ putStrLn ""
-        )
-        0
-        >> return ()
+    Just con -> do
+      runStateT (forever $ runGame con) 0
+      return ()
