@@ -22,8 +22,11 @@ type Scotty = ScottyT Text (ReaderT Config IO)
 
 type Handler = ActionT Text (ReaderT Config IO)
 
-bumpBoomp :: Text -> M.Map Text Integer -> (M.Map Text Integer, Integer)
-bumpBoomp k m = undefined
+bumpBoomp :: String -> M.Map String Integer -> (M.Map String Integer, Integer)
+bumpBoomp k m =
+  let newVal = (+) 1 $ M.findWithDefault 0 k m
+      updatedM = M.insert k newVal m
+   in (updatedM, newVal)
 
 app :: Scotty ()
 app =
@@ -33,8 +36,7 @@ app =
     curMRef <- lift $ asks counts
     curM <- (lift . lift) $ readIORef curMRef
     let key' = mappend prefix unprefixed
-        newVal = (+) 1 $ M.findWithDefault 0 key' curM
-        updatedM = M.insert key' newVal curM
+        (updatedM, newVal) = bumpBoomp key' curM
     lift . lift $ writeIORef curMRef updatedM
     html $ mconcat ["<h1>Success! Count was: ", TL.pack $ show newVal, "</h1>"]
 
@@ -43,5 +45,6 @@ main = do
   -- [prefixArg] <- getArgs
   counter <- newIORef M.empty
   let config = Config counter "lol"
+      -- TODO: don't understand this :(
       runR r = runReaderT r config
   scottyT 3000 runR app
