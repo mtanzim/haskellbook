@@ -2,12 +2,12 @@
 
 module StrictList where
 
-data List a = Nil | Cons ~a ~(List a) deriving (Show)
+data List a = Nil | Cons a ~(List a) deriving (Show)
 
 take' :: (Ord t, Num t) => t -> List a -> List a
 take' n _ | n <= 0 = Nil
 take' _ Nil = Nil
-take' n (Cons x xs) = (Cons x (take' (n -1) xs))
+take' n (Cons x xs) = Cons x (take' (n -1) xs)
 
 map' :: (t -> a) -> List t -> List a
 map' _ Nil = Nil
@@ -18,5 +18,4 @@ repeat' x = xs where xs = Cons x xs
 
 main :: IO ()
 main = do
-  -- print $ take' 10 $ map' (+ 1) (repeat' 1)
-  print $ repeat' 1
+  print $ take' 10 $ map' (+ 1) (repeat' 1)
