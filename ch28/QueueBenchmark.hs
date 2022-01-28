@@ -79,6 +79,9 @@ seqPush :: a -> S.Seq a -> S.Seq a
 seqPush a s = S.insertAt (S.length s) a s
 
 -- TODO: polymorphic function to cater all 3 dance functions?
+-- following type signature does not work
+-- genericDance :: (a -> b a -> b a) -> (b a -> Maybe (a, b a)) -> b a -> Int -> b a
+-- genericDance pushFn popFn z times = undefined
 lineDance :: Int -> S.Seq Int
 lineDance n =
   let z = S.fromList zLst
