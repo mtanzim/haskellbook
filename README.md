@@ -217,3 +217,105 @@ mappend   :: f                f           f
 $         :: (a -> b)         a           b
 (<*>)     :: f (a -> b) ->    f a ->      f b
 ```
+
+- We can see the monoid aspect of applicatives in action with Haskell tuples
+
+```ghci
+Prelude> fmap (+1) ("blah", 0)
+("blah",1)
+```
+
+- Whereas with applicatives:
+
+```ghci
+Prelude> ("Woo", (+1)) <*> (" Hoo!", 0)
+("Woo Hoo!", 1)
+
+Prelude> (Sum 2, (+1)) <*> (Sum 0, 0)
+(Sum {getSum = 2},1)
+
+Prelude> (Product 3, (+9))<*>(Product 2, 8)
+(Product {getProduct = 6},17)
+```
+
+- This is seen in the instance definition themselves, ie for tuples:
+
+```haskell
+instance (Monoid a, Monoid b) => Monoid (a,b) where
+  mempty = (mempty, mempty)
+  (a, b) `mappend` (a',b') = (a `mappend` a', b `mappend` b')
+
+instance Monoid a => Applicative ((,) a) where
+  pure x = (mempty, x)
+  (u, f) <*> (v, x) = (u `mappend` v, f x)
+```
+
+#### Usages of applicatives
+
+```text
+[(+1), (*2)] <*> [2, 4]
+[ (+1) 2 , (+1) 4 , (*2) 2 , (*2) 4 ]
+```
+
+```ghci
+Prelude> (,) <$> [1, 2] <*> [3, 4]
+[(1,3),(1,4),(2,3),(2,4)]
+```
+
+- The above can be thought of as:
+
+```text
+Prelude> (,) <$> [1, 2] <*> [3, 4]
+
+fmap the (,) over the first list:
+[(1, ), (2, )] <*> [3, 4]
+
+Then, we apply the first list to the second:
+
+[(1,3),(1,4),(2,3),(2,4)]
+```
+
+- `liftA2` gives us a more terse way of expressing the above
+
+```ghci
+Prelude> liftA2 (,) [1, 2] [3, 4]
+[(1,3),(1,4),(2,3),(2,4)]
+```
+
+- Similarly
+
+```ghci
+Prelude> (+) <$> [1, 2] <*> [3, 5]
+[4,6,5,7]
+Prelude> liftA2 (+) [1, 2] [3, 5]
+[4,6,5,7]
+Prelude> max <$> [1, 2] <*> [1, 4]
+[1,4,2,4]
+Prelude> liftA2 max [1, 2] [1, 4]
+[1,4,2,4]
+```
+
+#### Applicative laws
+
+- Identity
+
+`pure id <*> v = v`
+
+- Composition
+
+`pure (.) <*> u <*> v <*> w = u <*> (v <*> w)`
+
+- Homomorphism
+
+`pure f <*> pure x = pure (f x)`
+
+ie:
+
+```text
+pure (+1) <*> pure 1
+pure ((+1) 1)
+```
+
+- Interchange
+
+`u <*> pure y = pure ($ y) <*> u`
