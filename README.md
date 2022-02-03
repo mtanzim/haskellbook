@@ -154,7 +154,7 @@ fmap :: Functor f => (a -> b) -> f a -> f b
 [Chapter exercises](./ch17)
 
 - Applicatives are monoidal functors
-- With functors we apply a function inside a structure, with applicatives, we the function itself is inside of a structure
+- With functors we apply a function inside a structure, with applicatives, the function itself is inside of a structure
 - The monoid part is responsible to merging the structures together
 - For example, let's see a list of functions `ap`ped to a list of integers
 
@@ -180,4 +180,40 @@ class Functor f => Applicative f where
 - Note how every type that can have an applicative instance must also have a functor instance
 - The `pure` function _lifts_ something into the functorial/applicative structure
 - `<*>` is often called `ap` or `apply`
-- Noting the similarities bet
+- Noting the similarities between `<*>` and `fmap` or `<$>`:
+
+```haskell
+(<$>) :: Functor f => (a -> b) -> f a -> f b
+(<*>) :: Applicative f => f (a -> b) -> f a -> f b
+```
+
+- The above types demonstrates:
+  > with applicatives, the function itself is inside of a structure◊
+
+#### Where are the monoids?
+
+- We claimed applicatives are **monoidal** functors
+- Firstly, note the types of the following
+
+```haskell
+($) :: (a -> b) -> a -> b
+(<$>) :: (a -> b) -> f a -> f b
+(<*>) :: f (a -> b) -> f a -> f b
+```
+
+- Looking closer at the `<*>`, we we notice there are 2 arguments: `f (a -> b)` and `f a`, or put in another way:
+
+```text
+:: f (a -> b) -> f a -> f b
+f           f     f
+(a -> b)    a     b
+```
+
+- Now looking at the definition of `mappend`: `mappend :: Monoid a => a -> a -> a`
+- We can see that we have `Monoid` for our structure (`f`) and function application for the values
+
+```text
+mappend   :: f                f           f
+$         :: (a -> b)         a           b
+(<*>)     :: f (a -> b) ->    f a ->      f b
+```
