@@ -2,11 +2,17 @@
 
 Exercises and content for the [haskellbook](https://haskellbook.com/)
 
-Advent of code 2021 was moved [here](https://github.com/mtanzim/advent-of-code-2021)
-
 ## Why?
 
 - Curiosity around functional programming
+
+## Related Efforts
+
+- [Advent of code 2021 in Haskell](https://github.com/mtanzim/advent-of-code-2021)
+- [Haskell MOOC from U of Glasgow](https://github.com/mtanzim/fp-haskell)
+- [FP with Scala](https://github.com/mtanzim/fp-scala)
+- [FP with Standard ML](https://github.com/mtanzim/prog-lang-a)
+- [FP with Racket](https://github.com/mtanzim/prog-lang-b)
 
 ## Notes on critical concepts
 
@@ -86,7 +92,7 @@ Prelude> map (\x -> x > 3) [1..6]
 [False,False,False,True,True,True]
 ```
 
-- Note that for a type to have a `Functor` instance, it must be of kind `* -> *`
+- Note that for a type to have a `Functor` instance, it must be of kind `* -> *` or higher
 - For example, the following will **NOT** work:
 
 ```haskell
@@ -142,3 +148,36 @@ fmap (f . g) = fmap f . fmap g
 ```haskell
 fmap :: Functor f => (a -> b) -> f a -> f b
 ```
+
+### Applicative
+
+[Chapter exercises](./ch17)
+
+- Applicatives are monoidal functors
+- With functors we apply a function inside a structure, with applicatives, we the function itself is inside of a structure
+- The monoid part is responsible to merging the structures together
+- For example, let's see a list of functions `ap`ped to a list of integers
+
+```ghci
+GHCi, version 8.10.7: https://www.haskell.org/ghc/  :? for help
+Prelude> fns = [(+1), (*2)]
+Prelude> nums = [1,2,3]
+Prelude> fns <*> nums
+[2,3,4,2,4,6]
+Prelude>
+```
+
+- Note how the results of `(+1)` being `[2,3,4]` are concatenated (monoidal operation `mappend`) with the results of `(*2)` being `[2,4,6]`
+
+- Defining applicative as a type class:
+
+```haskell
+class Functor f => Applicative f where
+  pure :: a -> f a
+  (<*>) :: f (a -> b) -> f a -> f b
+```
+
+- Note how every type that can have an applicative instance must also have a functor instance
+- The `pure` function _lifts_ something into the functorial/applicative structure
+- `<*>` is often called `ap` or `apply`
+- Noting the similarities bet
