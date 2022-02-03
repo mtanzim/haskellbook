@@ -25,14 +25,15 @@ mappend [] [1..5] = [1..5]
 -- [1..5]
 
 -- Or more generally
-mappend x mempty = x
-mappend mempty x = x
+mappend x mempty == x
+mappend mempty x == x
 ```
 
 In Haskell, we define a type class for monoid as follows:
 
 ```haskell
-class Semigroup m => Monoid m where mempty :: m
+class Semigroup m => Monoid m where 
+  mempty :: m
   mappend :: m -> m -> m
   mconcat :: [m] -> m
   mconcat = foldr mappend mempty
