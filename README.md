@@ -188,7 +188,7 @@ class Functor f => Applicative f where
 ```
 
 - The above types demonstrates:
-  > with applicatives, the function itself is inside of a structure◊
+  > with applicatives, the function itself is inside of a structure
 
 #### Where are the monoids?
 
