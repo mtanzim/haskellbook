@@ -436,9 +436,39 @@ bindingAndSequencing' =
 
 ```text
 -- right identity
-m >>= return = m 
+m >>= return = m
 -- left identity
 return x >>= f = f x
 ```
 
 - Associativity: `(m >>= f) >>= g = m >>= (\x-> f x >>= g)`
+
+#### Composition
+
+- To compose monads, we need **Kleisli Composition**
+
+```haskell
+(.) :: (b -> c) -> (a -> b) -> a -> c
+(>>=) :: Monad m => m a -> (a -> m b) -> m b
+-- the order is flipped to match >>=
+(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c
+flip (.) :: (a -> b) -> (b -> c) -> a -> c
+```
+
+- Taking an example
+
+```haskell
+
+import Control.Monad ((>=>))
+sayHi :: String -> IO String
+sayHi greeting = do
+  putStrLn greeting
+  getLine
+readM :: Read a => String -> IO a
+readM = return . read
+getAge :: String -> IO Int
+getAge = sayHi >=> readM
+askForAge :: IO Int
+askForAge =
+  getAge "Hello! How old are you? "
+```
