@@ -319,3 +319,126 @@ pure ((+1) 1)
 - Interchange
 
 `u <*> pure y = pure ($ y) <*> u`
+
+### Monad
+
+[Chapter exercises](./ch18)
+
+- Monads are applicative functors
+- As a type class
+
+```haskell
+class Applicative m => Monad m where
+  (>>=) :: m a -> (a -> m b) -> m b
+  (>>) :: m a -> m b -> m b
+  return :: a -> m a
+```
+
+- Note the chain of dependency between functors, applicatives and monads: `Functor -> Applicative -> Monad`
+- In other words, functor and applicative can be derived from a monad, one law demonstrating this is: `fmap f xs = xs >>= return . f`
+- `return` is the same as pure, it simply lifts a value into context
+- `>>` aka Mr. Pointy aka the sequencing operator sequences two actions while dismissing the result
+- `>>=` is the `bind` operator, and it is what makes monads special
+- Let's reflect on the similarities between the key operations between functors, applicatives and monads:
+
+```haskell
+fmap :: Functor f => (a -> b) -> f a -> f b
+<*> :: Applicative f => f (a -> b) -> f a -> f b
+>>= :: Monad f => f a -> (a -> f b) -> f b
+```
+
+- To develop and intuition for the essence of monads,let's take an example using map on a function of type `(a -> f b)`
+
+```haskell
+fmap :: Functor f => (a -> f b) ->  a -> f (f b)
+```
+
+- Seeing the above with lists:
+
+```ghci
+Prelude> andOne x = [x, 1]
+Prelude> andOne 10
+[10,1]
+Prelude> :t fmap andOne [4, 5, 6]
+fmap andOne [4, 5, 6] :: Num t => [[t]]
+Prelude> fmap andOne [4, 5, 6]
+[[4,1],[5,1],[6,1]]
+```
+
+- Noting that now we have a list of lists, how do we flatten it? We use `concat`
+
+```ghci
+Prelude> concat $ fmap andOne [4, 5, 6]
+[4,1,5,1,6,1]
+```
+
+- Monad in ways is the generalization of the `concat`, which leads us to the monad's join function:
+
+```haskell
+join :: Monad m => m (m a) -> m a
+-- compare
+concat :: [[a]] -> [a]
+```
+
+- Note that the `join` is what sets monads apart, this ability to peel away the extra embedded structure that is of the same type as the outer structure
+
+- Seeing the type signature for bind, we also note that bind is simply `fmap` composed with `join`:
+
+```haskell
+-- keep in mind this is >>= flipped
+bind :: Monad m => (a -> m b) -> m a -> m b
+bind = join . fmap
+```
+
+- Note that the `do` syntax in Haskell is sugar for sequencing and binding monads
+
+```haskell
+sequencing :: IO ()
+sequencing = do
+  putStrLn "blah"
+  putStrLn "another thing"
+
+sequencing' :: IO ()
+sequencing' =
+  putStrLn "blah" >> putStrLn "another thing"
+
+binding :: IO ()
+binding = do
+  name <- getLine
+  putStrLn name
+
+binding' :: IO ()
+binding' = getLine >>= putStrLn
+```
+
+- Note how the `do` syntax helps avoid nesting
+- The style is also reminiscent of imperative programming, but we are still programming in a purely functional way
+
+```haskell
+bindingAndSequencing :: IO ()
+bindingAndSequencing = do
+  putStrLn "name pls:"
+  name <- getLine
+  putStrLn ("y helo thar: " ++ name)
+
+bindingAndSequencing' :: IO ()
+bindingAndSequencing' =
+  putStrLn "name pls:" >> getLine >>=
+    \name -> putStrLn ("y helo thar: " ++ name)
+```
+
+- [See example of the Maybe monad in use](./ch18/Cow.hs)
+- [See example of the Either monad in use](./ch18/SoftwareShop.hs)
+
+#### Laws
+
+- Identity: `return` should not perform an operations
+
+```text
+-- right identity
+m >>= return = m 
+-- left identity
+return x >>= f = f x
+```
+
+- Associativity: `(m >>= f) >>= g = m >>= (\x-> f x >>= g)`
