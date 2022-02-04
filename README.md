@@ -27,9 +27,8 @@ mappend [1, 2, 3] [4, 5, 6]
 -- [1,2,3,4,5,6]
 mappend [1..5] []
 -- [1..5]
-mappend [] [1..5] = [1..5]
+mappend [] [1..5]
 -- [1..5]
-
 -- Or more generally
 mappend x mempty == x
 mappend mempty x == x
