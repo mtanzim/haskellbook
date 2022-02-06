@@ -586,6 +586,8 @@ Sum {getSum = 0}
 
 ### Traversable
 
+[Chapter exercises](./ch21)
+
 - Functors transform values within a structure
 - Applicatives transform values with within a structure where the transformer function is also within a structure
 - **Traversable allows us to process values embedded in a structure as if they existed in a sequential order**
@@ -599,3 +601,79 @@ class (Functor t, Foldable t) => Traversable t where
   traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
   traverse f = sequenceA . fmap f
 ```
+
+- `traverse` maps each element in a structure to an action, evaluates the actions left to right, and then collects the results
+- Comparing `traverse` to `fmap`
+
+```haskell
+fmap :: Functor f => (a -> b) -> f a -> f b
+traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
+
+myData :: [String]
+myFunc :: String -> IO Record
+wrong :: [IO Record]
+wrong = fmap myFunc myData
+right :: IO [Record]
+right = traverse myFunc myData
+```
+
+-`traverse`s counterpart is `sequenceA`; note the minimal instance as `travserse` and `sequenceA` can be defined in terms of the other
+
+```haskell
+-- | Evaluate each action in the
+-- structure from left to right,
+-- and collect the results.
+sequenceA :: Applicative f => t (f a) -> f (t a)
+sequenceA = traverse id
+{-# MINIMAL traverse | sequenceA #-}
+```
+
+- Let's see `sequenceA` in more detail
+- As seen in the type signature, `sequenceA` **only** flips two contexts or structure
+
+```ghci
+Prelude> xs = [Just 1, Just 2, Just 3]
+Prelude> sequenceA xs
+Just [1,2,3]
+Prelude> xsn = [Just 1, Just 2, Nothing]
+Prelude> sequenceA xsn
+Nothing
+Prelude> fmap sum $ sequenceA xs
+Just 6
+Prelude> fmap product (sequenceA xsn)
+Nothing
+```
+
+- In the first two example, we are simply flipping around the list, and `Maybe` contexts
+- Note in the second set of examples, we can lift a function (`sum` in this case) into the `Maybe` context
+
+- Looking at `traverse` now, keeping in mind `traverse f = sequenceA . fmap f`
+
+```ghci
+Prelude> fmap Just [1, 2, 3]
+[Just 1,Just 2,Just 3]
+Prelude> sequenceA $ fmap Just [1, 2, 3]
+Just [1,2,3]
+Prelude> sequenceA . fmap Just $ [1, 2, 3]
+Just [1,2,3]
+Prelude> traverse Just [1, 2, 3]
+Just [1,2,3]
+```
+
+- In general, we use traversable when we need to flip around two type constructors, or map a function and hen flip around the constructors
+- Note also that `Traversable` is stronger than `Functor` and `Foldable`, therefore, we can recover `Functor` and `Foldable` from `Traversable`, similar to how `Functor` and `Applicative` can be recovered from `Monad`
+- See the [chapter exercises](./ch21/ChapterExercises.hs) for examples of `Traversable` instances
+
+#### Traversable laws
+
+`traverse` must satisfy:
+
+- Naturality: `t . traverse f = traverse (t . f)`
+- Identity: `traverse Identity = Identity`
+- Composition: `traverse (Compose . fmap g . f) = Compose . fmap (traverse g) . traverse f`
+
+`sequenceA` must satisfy:
+
+- Naturality: `t . sequenceA = sequenceA . fmap t`
+- Identity: `sequenceA . fmap Identity = Identity`
+- Composition: `sequenceA . fmap Compose = Compose . fmap sequenceA . sequenceA`
