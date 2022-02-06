@@ -15,6 +15,139 @@ Exercises and content for the [haskellbook](https://haskellbook.com/)
 
 ## Notes on critical concepts
 
+### Type classes
+
+[Chapter exercises](./ch01-ch06/typeClasses.hs)
+
+- In Haskell, a declaration of a type defines how that type is constructed
+- A declaration of a type class on the other hand defines how a set of types are **consumed**
+- Type classes allow for generalizations over a set of types in order to define and execute a set of features for those types
+- One example, it is very useful to be able to test values for equality. So, any type that implements the `Eq` type class, it's values can be tested for equality
+- As long as a datatype implements or instantiates the `Eq` type class, the functions `==` and `/=` can be used
+- Looking at an example datatype, `Bool` instantiates the following type classes:
+
+```ghci
+Prelude> :info Bool
+data Bool = False | True
+instance Eq Bool
+instance Ord Bool
+instance Show Bool
+instance Read Bool
+instance Enum Bool
+instance Bounded Bool
+```
+
+- Looking at an example type type class:
+
+```ghci
+Prelude> :info Eq
+class Eq a where
+(==) :: a -> a -> Bool
+(/=) :: a -> a -> Bool
+```
+
+- The above states, for any type `a` to implement the `Eq` type class, it must define the `==` and `\=` functions that follow the required signature
+
+- Attempting to write a type class instance of a new data type, we arrive at:
+
+```haskell
+data Trivial = Trivial'
+instance Eq Trivial where
+  Trivial' == Trivial' = True
+```
+
+- Note that `\=` can be derived from `==` and thus its definition is not required for the minimal implementation
+
+- Looking at another example:
+
+```haskell
+data Identity a = Identity a
+instance Eq (Identity a) where
+  (==) (Identity v) (Identity v') = v == v'
+```
+
+- Type classes are automatically dispatched by type
+
+### Algebraic datatypes
+
+[Chapter exercises](./ch11)
+
+- A type can be thought of as an enumeration of constructors that take zero or more arguments
+- Haskell offers the following: sum types, product types (including record syntax), type aliases, and a special datatype called `newtype` (which will not be covered in the notes)
+- Haskell has 2 types of constructors: type constructors and data constructors
+- Type constructors are used only at the type level: in type signatures, and type class declarations/instances
+- Data constructors create values at term level (values that can be interacted with at run time)
+- Type and data constructors not taking any arguments are **constants**, ie: `Bool` is a type constant, and `True` and `False` are data constants
+- However, we need to allow different types or amounts of data to be store in our data types. In these times, the type and data constructors are **parametrized**
+- In these cases, the constructors are like functions, as they must be applied to become a concrete type of value
+
+```haskell
+data Trivial = Trivial'
+data UnaryTypeCon a = UnaryValueCon a
+```
+
+- In the above, `Trivial` is a constant value at term level; it takes no arguments and this is called **nullary** or a **type constant**
+- `Trivial'` is a constant **value** as it exists at term level, or run time space
+- `UnaryTypeCon` is a **type constructor** with one argument, awaiting a **type constant** to be applied to it
+- `UnaryValueCon` is a **data constructor** awaiting a value to be applied to it
+- The same is true of list datatype
+- At the type level, we have `a : [a]`, where `a` is a variable
+- At runtime, when a type of value can be applied, it can become concrete, ie: `[Char]` or `[Int]`
+- This leads us to the idea of `kinds`, these are the types of the type constructors
+- Kinds are not types until they are fully applied
+- The fully applied kind is denoted as `*`, where is the kind `* -> *` is awaiting a single `*` to be applied
+- Anything that is awaiting application is a **higher kinded datatype**, an example is lists as seen above
+- Let's see some examples
+
+```haskell
+-- identical to (a, b, c, d)
+data Silly a b c d =
+  MkSilly a b c d deriving Show
+```
+
+```ghci
+Prelude> :kind Silly
+Silly :: * -> * -> * -> * -> *
+
+Prelude> :kind Silly Int
+Silly Int :: * -> * -> * -> *
+
+Prelude> :kind Silly Int String Bool String
+Silly Int String Bool String :: *
+```
+
+- The number of arguments a type or data constructor takes is its **arity**, ie: nullary, unary
+
+- The number of possible values a datatype can hold is its **cardinality**
+- For example, `Bool` has a cardinality of 2 (`True | False`), whereas `Int8` has a cardinality of 256 (-128 to 127)
+
+### Sum types
+
+- An example : `data Bool = False | True`
+- `|` represents a logical disjunction aka `or`, this is the `sum` in algebraic datatypes
+- To know the cardinality of sum types, we _add_ the cardinalities of it data constructors; so for `Bool`, it is 2, `True` and `False`
+
+### Product types
+
+- A product type’s cardinality is the product of the cardinalities of its inhabitants
+- A product type expresses `and`
+- Tuples are an example of a product type: `(,) :: a -> b -> (a, b)`
+- It allows us to have two kinds of data, each with their own type (or not)
+- Following is an example of a product type with the record syntax
+
+```haskell
+data Person = Person { name :: String, age :: Int }
+```
+
+- You may combine sum and product types, for example
+
+```haskell
+data Gender = Male | Female
+data Person = Person { name :: String, age :: Int, gender: Gender }
+```
+
+- The function type (`a -> b`) has exponential cardinality, ie: `(Bool -> Bool)` has the cardinality of `2 ^ 2`
+
 ### Monoid and Semigroup
 
 [Chapter exercises](./ch15)
