@@ -9,7 +9,6 @@ Exercises and content for the [haskellbook](https://haskellbook.com/)
 ## Related Efforts
 
 - [Advent of code 2021 in Haskell](https://github.com/mtanzim/advent-of-code-2021)
-- [Haskell MOOC from U of Glasgow](https://github.com/mtanzim/fp-haskell)
 - [FP with Scala](https://github.com/mtanzim/fp-scala)
 - [FP with Standard ML](https://github.com/mtanzim/prog-lang-a)
 - [FP with Racket](https://github.com/mtanzim/prog-lang-b)
@@ -504,7 +503,8 @@ class Foldable (t :: * -> *) where
 Prelude> foldr (+) 0 [1..5]
 15
 Prelude> fold (+) [1, 2, 3, 4, 5]
--- error message resulting from incorrect -- number of arguments
+-- error message resulting from incorrect
+-- number of arguments
 
 Prelude> xs = map Sum [1..5]
 Prelude> fold xs
