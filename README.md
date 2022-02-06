@@ -471,3 +471,131 @@ askForAge :: IO Int
 askForAge =
   getAge "Hello! How old are you? "
 ```
+
+### Foldable
+
+[Chapter exercises](./ch20)
+
+- A list fold reduces the values inside a list to a summary value
+- This is done by recursively applying some function
+- The folding function is always dependent on some `Monoid` instances
+- Seeing the class definition, a Foldable instance must define either `foldMap` or `foldr` to be minimally complete
+
+```haskell
+class Foldable t where
+{-# MINIMAL foldMap | foldr #-}
+```
+
+- Also, note: `class Foldable (t :: * -> *) where`, indicating `t` must be a higher kinded type
+- Seeing the overall class definition:
+
+```haskell
+class Foldable (t :: * -> *) where
+  fold :: Monoid m => t m -> m
+  foldMap :: Monoid m=> (a -> m) -> t a -> m
+```
+
+- `fold` allows us to combine elements inside a Foldable structure using the defined Monoids
+- `foldMap` on the other hand **first maps each element of the structure
+  to a Monoid**, and then combines the results
+- Note the following examples to observe the differences b/w `foldr`, `fold` and `foldMap`
+
+```ghci
+Prelude> foldr (+) 0 [1..5]
+15
+Prelude> fold (+) [1, 2, 3, 4, 5]
+-- error message resulting from incorrect -- number of arguments
+
+Prelude> xs = map Sum [1..5]
+Prelude> fold xs
+Sum {getSum = 15}
+
+
+Prelude> :{
+*Main| let xs :: [Sum Integer]
+*Main|     xs = [1, 2, 3, 4, 5]
+*Main| :}
+Prelude> fold xs
+Sum {getSum = 15}
+```
+
+- In some cases, the compiler can figure out the monoid instance and doesn't need the explicit typing, for example with strings:
+
+```ghci
+Prelude> foldr (++) "" ["hello", " julie"]
+"hello julie"
+```
+
+- Similarly, one can use a `foldMap` to specify the function that will convert the elements to something with a non ambiguous monoid instance
+
+```ghci
+Prelude> foldMap Sum [1, 2, 3, 4]
+Sum {getSum = 10}
+Prelude> foldMap Product [1, 2, 3, 4]
+Product {getProduct = 24}
+
+```
+
+- Note that `Sum` and `Product` are the functions/data constructors that disambiguate the monoid instance for integers, but `foldMap` can also be used as follows:
+
+```ghci
+Prelude> xs = map Sum [1..3]
+Prelude> foldMap (*5) xs
+Sum {getSum = 30}
+-- 5 + 10 + 15
+30
+```
+
+- Let's look at some examples of Foldable instances
+
+```haskell
+instance Foldable Identity where
+  foldr f z (Identity x) = f x z
+  foldl f z (Identity x) = f z x
+  foldMap f (Identity x) = f x
+```
+
+```ghci
+Prelude> foldr (*) 1 (Identity 5)
+5
+Prelude> foldl (*) 5 (Identity 5)
+25
+```
+
+```haskell
+-- Using a fake maybe type
+instance Foldable Optional where
+  foldr _ z Nada = z
+  foldr f z (Yep x) = f x z
+  foldl _ z Nada = z
+  foldl f z (Yep x) = f z x
+  foldMap _ Nada = mempty
+  foldMap f (Yep a) = f a
+```
+
+```ghci
+Prelude> foldr (+) 1 Nothing
+1
+
+Prelude> fm = foldMap (+1)
+Prelude> fm Nothing :: Sum Integer
+Sum {getSum = 0}
+```
+
+- Note that in the above cases, the fold functions are not used to combine values, but simply consume the values from within their structures
+
+### Traversable
+
+- Functors transform values within a structure
+- Applicatives transform values with within a structure where the transformer function is also within a structure
+- **Traversable allows us to process values embedded in a structure as if they existed in a sequential order**
+
+> Traversable allows you to transform elements inside a structure like a functor, producing applicative effects along the way, and lift those potentially multiple instances of applicative structure outside of the traversable structure. It is commonly described as a way to traverse a data structure, mapping a function inside a structure while accumulating applicative contexts in the process.
+
+- Seeing the traversable type class definition:
+
+```haskell
+class (Functor t, Foldable t) => Traversable t where
+  traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
+  traverse f = sequenceA . fmap f
+```
