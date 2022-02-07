@@ -837,7 +837,7 @@ Note: this concept is very dense, and cannot be summarized effectively (at least
 - Note the [`IdentityT` monad transformer](./ch25/IdentityT.hs) as an example
 - Quoting the book: note the following, critical pattern
 
-```text
+<blockquote>
 Transformers are bearers of single-type concrete information that let you create ever-bigger monads, in a sense. Nesting such as:
 
 (Monad m) => m (m a)
@@ -855,4 +855,5 @@ you need to get to this:
 f (f b)
 
 You won’t be able to unless you have some way of folding the g in the middle. You can’t do that with Monad. The essence of Monad is join, but here you have only one bit of g structure, not g (g ...), so that’s not enough. The straightforward thing to do is to make g concrete. With concrete type information for the inner bit of structure, we can fold out the g and get on with it. The good news is that transformers don’t require f to be concrete; f can remain polymorphic, so long as it has a Monad instance, and therefore we only need to write a transformer once for each type.
-```
+
+</blockquote>
