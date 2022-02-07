@@ -4,7 +4,7 @@ Exercises and content for the [haskellbook](https://haskellbook.com/)
 
 ## Why?
 
-- Curiosity around functional programming
+- Curiosity around functional programming concepts and purely functional programming
 
 ## Related Efforts
 
@@ -12,6 +12,11 @@ Exercises and content for the [haskellbook](https://haskellbook.com/)
 - [FP with Scala](https://github.com/mtanzim/fp-scala)
 - [FP with Standard ML](https://github.com/mtanzim/prog-lang-a)
 - [FP with Racket](https://github.com/mtanzim/prog-lang-b)
+
+## Related Resources
+
+- <http://learnyouahaskell.com/chapters>
+- <https://mostly-adequate.gitbook.io/mostly-adequate-guide/>
 
 ## Notes on critical concepts
 
@@ -810,3 +815,38 @@ Just [1,2,3]
 - Naturality: `t . sequenceA = sequenceA . fmap t`
 - Identity: `sequenceA . fmap Identity = Identity`
 - Composition: `sequenceA . fmap Compose = Compose . fmap sequenceA . sequenceA`
+
+### Monad Transformers
+
+[Chapter exercises- type composition](./ch25)
+[Chapter exercises- monad transformer usage](./ch26)
+
+Note: this concept is very dense, and cannot be summarized effectively (at least not by me, yet anyways). Refer back to the book itself and other resources as needed. Following is a decent, terse overview: [Monad Transformers Explained](https://wiki.haskell.org/Monad_Transformers_Explained)
+
+- The issue with monads, unlike functors and applicatives, is that one cannot guarantee getting a monad out of putting two other monads together
+- Hence, to when we need to compose two monads, we need monad transformers
+- The monad transformer is a type constructor that takes a `Monad` as an argument and returns a `Monad` as a result
+- The essence of the issue of composing two monads is that it is impossible to `join` two unknown monads.
+- To make the `join` happen, we need to reduce polymorphism an make one of the monads concrete. The other can stay as a variable
+- Note the [`IdentityT` monad transformer](./ch25/IdentityT.hs) as an example
+- Quoting the book: note the following, critical pattern
+
+```text
+Transformers are bearers of single-type concrete information that let you create ever-bigger monads, in a sense. Nesting such as:
+
+(Monad m) => m (m a)
+
+Is addressed by join already. We use transformers when we want a >>= operation over f and g of different types (but both have Monad instances). You have to create new types called monad transformers and write Monad instances for those types to have a way of dealing with the extra structure generated.
+
+The general pattern is this: You want to compose two polymorphic types, f and g, that each have a Monad instance. But you’ll end up with this pattern:
+
+f (g (f b))
+
+Monad’s bind can’t join those types, not with that intervening g. So
+
+you need to get to this:
+
+f (f b)
+
+You won’t be able to unless you have some way of folding the g in the middle. You can’t do that with Monad. The essence of Monad is join, but here you have only one bit of g structure, not g (g ...), so that’s not enough. The straightforward thing to do is to make g concrete. With concrete type information for the inner bit of structure, we can fold out the g and get on with it. The good news is that transformers don’t require f to be concrete; f can remain polymorphic, so long as it has a Monad instance, and therefore we only need to write a transformer once for each type.
+```
