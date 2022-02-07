@@ -18,6 +18,12 @@ Exercises and content for the [Haskell programming from first principles](https:
 - <http://learnyouahaskell.com/chapters>
 - <https://mostly-adequate.gitbook.io/mostly-adequate-guide/>
 
+## Repositories that helped along the way
+
+- <https://github.com/andrewMacmurray/haskell-book-solutions>
+- <https://github.com/lisss/yaths>
+- <https://github.com/johnchandlerburnham/hpfp>
+
 ## Notes on critical concepts
 
 ### Type classes
