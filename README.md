@@ -1,19 +1,19 @@
 # haskellbook
 
-Exercises and content for the [haskellbook](https://haskellbook.com/)
+Exercises and content for the [Haskell programming from first principles](https://haskellbook.com/)
 
 ## Why?
 
 - Curiosity around functional programming concepts and purely functional programming
 
-## Related Efforts
+## Related efforts
 
 - [Advent of code 2021 in Haskell](https://github.com/mtanzim/advent-of-code-2021)
 - [FP with Scala](https://github.com/mtanzim/fp-scala)
 - [FP with Standard ML](https://github.com/mtanzim/prog-lang-a)
 - [FP with Racket](https://github.com/mtanzim/prog-lang-b)
 
-## Related Resources
+## Related resources
 
 - <http://learnyouahaskell.com/chapters>
 - <https://mostly-adequate.gitbook.io/mostly-adequate-guide/>
@@ -267,7 +267,7 @@ Prelude> (fmap . fmap . fmap) replaceWithP lms
 
 #### Functor laws
 
-- Idenity
+- Identity
 
 ```haskell
 fmap id == id
@@ -555,7 +555,7 @@ bindingAndSequencing :: IO ()
 bindingAndSequencing = do
   putStrLn "name pls:"
   name <- getLine
-  putStrLn ("y helo thar: " ++ name)
+  putStrLn ("y hello thar: " ++ name)
 
 bindingAndSequencing' :: IO ()
 bindingAndSequencing' =
@@ -755,7 +755,7 @@ right :: IO [Record]
 right = traverse myFunc myData
 ```
 
--`traverse`s counterpart is `sequenceA`; note the minimal instance as `travserse` and `sequenceA` can be defined in terms of the other
+-`traverse`s counterpart is `sequenceA`; note the minimal instance as `traverse` and `sequenceA` can be defined in terms of the other
 
 ```haskell
 -- | Evaluate each action in the
