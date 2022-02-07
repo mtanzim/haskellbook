@@ -132,13 +132,13 @@ Silly Int String Bool String :: *
 - The number of possible values a datatype can hold is its **cardinality**
 - For example, `Bool` has a cardinality of 2 (`True | False`), whereas `Int8` has a cardinality of 256 (-128 to 127)
 
-### Sum types
+#### Sum types
 
 - An example : `data Bool = False | True`
 - `|` represents a logical disjunction aka `or`, this is the `sum` in algebraic datatypes
 - To know the cardinality of sum types, we _add_ the cardinalities of it data constructors; so for `Bool`, it is 2, `True` and `False`
 
-### Product types
+#### Product types
 
 - A product type’s cardinality is the product of the cardinalities of its inhabitants
 - A product type expresses `and`
