@@ -514,7 +514,7 @@ Prelude> concat $ fmap andOne [4, 5, 6]
 [4,1,5,1,6,1]
 ```
 
-- Monad in ways is the generalization of the `concat`, which leads us to the monad's join function:
+- Monad in ways is the generalization of the `concat`, which leads us to the monad's <code>join</code> function:
 
 ```haskell
 join :: Monad m => m (m a) -> m a
@@ -840,20 +840,18 @@ Note: this concept is very dense, and cannot be summarized effectively (at least
 <blockquote>
 Transformers are bearers of single-type concrete information that let you create ever-bigger monads, in a sense. Nesting such as:
 
-(Monad m) => m (m a)
+<code>(Monad m) => m (m a)</code>
 
-Is addressed by join already. We use transformers when we want a >>= operation over f and g of different types (but both have Monad instances). You have to create new types called monad transformers and write Monad instances for those types to have a way of dealing with the extra structure generated.
+Is addressed by join already. We use transformers when we want a <code>>>=</code> operation over f and g of different types (but both have Monad instances). You have to create new types called monad transformers and write Monad instances for those types to have a way of dealing with the extra structure generated.
 
 The general pattern is this: You want to compose two polymorphic types, f and g, that each have a Monad instance. But you’ll end up with this pattern:
 
-f (g (f b))
+<code>f (g (f b))</code>
 
-Monad’s bind can’t join those types, not with that intervening g. So
+Monad’s bind can’t join those types, not with that intervening g. So you need to get to this:
 
-you need to get to this:
+<code>f (f b)</code>
 
-f (f b)
-
-You won’t be able to unless you have some way of folding the g in the middle. You can’t do that with Monad. The essence of Monad is join, but here you have only one bit of g structure, not g (g ...), so that’s not enough. The straightforward thing to do is to make g concrete. With concrete type information for the inner bit of structure, we can fold out the g and get on with it. The good news is that transformers don’t require f to be concrete; f can remain polymorphic, so long as it has a Monad instance, and therefore we only need to write a transformer once for each type.
+You won’t be able to unless you have some way of folding the g in the middle. You can’t do that with Monad. The essence of Monad is <code>join</code>, but here you have only one bit of g structure, not g (g ...), so that’s not enough. The straightforward thing to do is to make g concrete. With concrete type information for the inner bit of structure, we can fold out the g and get on with it. The good news is that transformers don’t require f to be concrete; f can remain polymorphic, so long as it has a Monad instance, and therefore we only need to write a transformer once for each type.
 
 </blockquote>
