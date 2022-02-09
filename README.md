@@ -26,7 +26,12 @@ Exercises and content for the [Haskell programming from first principles](https:
 
 ## Notes on critical concepts
 
-### Type classes
+### Table of contents
+
+- [Type classes](#type-classes)
+- [Algebraic datatypes](#adt)
+
+### Type classes {#type-classes}
 
 [Chapter exercises](./ch01-ch06/typeClasses.hs)
 
@@ -79,7 +84,7 @@ instance Eq (Identity a) where
 
 - Type classes are automatically dispatched by type
 
-### Algebraic datatypes
+### Algebraic datatypes {#adt}
 
 [Chapter exercises](./ch11)
 
