@@ -29,9 +29,16 @@ Exercises and content for the [Haskell programming from first principles](https:
 ### Table of contents
 
 - [Type classes](#type-classes)
-- [Algebraic datatypes](#adt)
+- [Algebraic datatypes](#algebraic-datatypes)
+- [Monoid and semigroup](#monoid-and-semigroup)
+- [Functor](#functor)
+- [Applicative](#applicative)
+- [Monad](#monad)
+- [Foldable](#foldable)
+- [Traversable](#traversable)
+- [Monad transformers](#monad-transformers)
 
-### Type classes {#type-classes}
+### Type classes
 
 [Chapter exercises](./ch01-ch06/typeClasses.hs)
 
@@ -84,7 +91,7 @@ instance Eq (Identity a) where
 
 - Type classes are automatically dispatched by type
 
-### Algebraic datatypes {#adt}
+### Algebraic datatypes
 
 [Chapter exercises](./ch11)
 
