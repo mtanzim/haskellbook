@@ -824,8 +824,8 @@ Just [1,2,3]
 
 ### Monad Transformers
 
-[Chapter exercises- type composition](./ch25)
-[Chapter exercises- monad transformer usage](./ch26)
+- [Chapter exercises- type composition](./ch25)
+- [Chapter exercises- monad transformer usage](./ch26)
 
 Note: this concept is very dense, and cannot be summarized effectively (at least not by me, yet anyways). Refer back to the book itself and other resources as needed. Following is a decent, terse overview: [Monad Transformers Explained](https://wiki.haskell.org/Monad_Transformers_Explained)
 
