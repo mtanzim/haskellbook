@@ -40,7 +40,8 @@ Exercises and content for the [Haskell programming from first principles](https:
 
 ### Type classes
 
-[Chapter exercises](./ch01-ch06/typeClasses.hs)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch01-ch06/typeClasses.hs)
 
 - In Haskell, a declaration of a type defines how that type is constructed
 - A declaration of a type class on the other hand defines how a set of types are **consumed**
@@ -93,7 +94,8 @@ instance Eq (Identity a) where
 
 ### Algebraic datatypes
 
-[Chapter exercises](./ch11)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch11)
 
 - A type can be thought of as an enumeration of constructors that take zero or more arguments
 - Haskell offers the following: sum types, product types (including record syntax), type aliases, and a special datatype called `newtype` (which will not be covered in the notes)
@@ -173,7 +175,8 @@ data Person = Person { name :: String, age :: Int, gender: Gender }
 
 ### Monoid and Semigroup
 
-[Chapter exercises](./ch15)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch15)
 
 - A monoid is a **binary associative** operation with an **identity**
 
@@ -229,7 +232,8 @@ class Semigroup a where
 
 ### Functor
 
-[Chapter exercises](./ch16)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch16)
 
 - A functor is a way of a applying a function inside of a structure, without altering the structure
 - Seeing this with a type class:
@@ -305,7 +309,8 @@ fmap :: Functor f => (a -> b) -> f a -> f b
 
 ### Applicative
 
-[Chapter exercises](./ch17)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch17)
 
 - Applicatives are monoidal functors
 - With functors we apply a function inside a structure, with applicatives, the function itself is inside of a structure
@@ -476,7 +481,8 @@ pure ((+1) 1)
 
 ### Monad
 
-[Chapter exercises](./ch18)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch18)
 
 - Monads are applicative functors
 - As a type class
@@ -629,7 +635,8 @@ askForAge =
 
 ### Foldable
 
-[Chapter exercises](./ch20)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch20)
 
 - A list fold reduces the values inside a list to a summary value
 - This is done by recursively applying some function
@@ -742,7 +749,8 @@ Sum {getSum = 0}
 
 ### Traversable
 
-[Chapter exercises](./ch21)
+- [Back to TOC](#table-of-contents)
+- [Chapter exercises](./ch21)
 
 - Functors transform values within a structure
 - Applicatives transform values with within a structure where the transformer function is also within a structure
@@ -836,6 +844,7 @@ Just [1,2,3]
 
 ### Monad Transformers
 
+- [Back to TOC](#table-of-contents)
 - [Chapter exercises- type composition](./ch25)
 - [Chapter exercises- monad transformer usage](./ch26)
 
