@@ -12,6 +12,7 @@ Exercises and content for the [Haskell programming from first principles](https:
 - [FP with Scala](https://github.com/mtanzim/fp-scala)
 - [FP with Standard ML](https://github.com/mtanzim/prog-lang-a)
 - [FP with Racket](https://github.com/mtanzim/prog-lang-b)
+- [Studying Rust](https://github.com/mtanzim/rust-book)
 
 ## Related resources
 
